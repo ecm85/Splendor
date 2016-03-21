@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -29,7 +30,9 @@ namespace Splendor
 		{
 			var newCards = ConvertCardsToNewCards();
 			var pdf = PdfCreator.CreatePdfDocument(newCards.Select(ImageCreator.CreateCardImage).ToList());
-			pdf.Save("c:\\delete\\test.pdf");
+			const string path = "c:\\delete\\test.pdf";
+			pdf.Save(path);
+			Process.Start(path);
 		}
 
 		private static IEnumerable<NewCard> ConvertCardsToNewCards()
