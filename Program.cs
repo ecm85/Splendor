@@ -28,8 +28,9 @@ namespace Splendor
 
 		static void Main()
 		{
+			var imageCreator = new ImageCreator();
 			var newCards = ConvertCardsToNewCards();
-			var pdf = PdfCreator.CreatePdfDocument(newCards.Select(ImageCreator.CreateCardImage).ToList());
+			var pdf = PdfCreator.CreatePdfDocument(newCards.Select(imageCreator.CreateCardImage).ToList());
 			const string path = "c:\\delete\\test.pdf";
 			pdf.Save(path);
 			Process.Start(path);
@@ -42,8 +43,9 @@ namespace Splendor
 				.Select(s => s.Split('\t'))
 				.Select(tokens => new Card
 				{
-					ResourceProduced = tokens[0],
-					Costs = tokens[1].Split('+').ToDictionary(token => CharToString(token[1]), token => CharToInt(token[0]))
+					ResourceProduced = tokens[1],
+					Costs = tokens[2].Split('+').ToDictionary(token => CharToString(token[1]), token => CharToInt(token[0])),
+					Points = string.IsNullOrWhiteSpace(tokens[0]) ? 0 : int.Parse(tokens[0])
 				})
 				.ToList();
 
@@ -53,7 +55,8 @@ namespace Splendor
 				return new NewCard
 				{
 					ResourceProduced = TransformColorProduced(card.ResourceProduced),
-					Costs = transformedCosts
+					Costs = transformedCosts,
+					Points = card.Points
 				};
 			});
 

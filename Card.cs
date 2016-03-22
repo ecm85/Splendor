@@ -6,5 +6,6 @@ namespace Splendor
 	{
 		public string ResourceProduced { get; set; }
 		public IDictionary<string, int> Costs { get; set; } = new Dictionary<string, int>();
+		public int Points { get; set; }
 	}
 }

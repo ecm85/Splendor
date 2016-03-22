@@ -6,7 +6,7 @@ namespace Splendor
 {
 	public class NewCard : Card
 	{
-		private static readonly Dictionary<string, string> materialsByResource = new Dictionary<string, string>
+		private static readonly IDictionary<string, string> materialsByResource = new Dictionary<string, string>
 		{
 			{ "Iron", "Iron" },
 			{ "Dragonbone", "Dragonbone" },
@@ -15,7 +15,7 @@ namespace Splendor
 			{ "Magic", "Magic" }
 		};
 
-		private static readonly Dictionary<Tuple<string, string>, string>  doubleMaterialsByResources = new Dictionary<Tuple<string, string>, string>
+		private static readonly IDictionary<Tuple<string, string>, string>  doubleMaterialsByResources = new Dictionary<Tuple<string, string>, string>
 		{
 			{Tuple.Create("Iron", "Wood"), "Ironwood"},
 			{Tuple.Create("Iron", "Stone"), "Ironstone"},
@@ -29,19 +29,28 @@ namespace Splendor
 			{Tuple.Create("Magic", "Dragonbone"), "Enchanted Dragonbone"}
 		};
 
-		private static readonly Dictionary<string, string> toolsByResourceProduced = new Dictionary<string, string>
+		private static readonly IDictionary<string, string> toolsByResourceProduced = new Dictionary<string, string>
 		{
 			{"Wood", "Axe" },
 			{"Dragonbone", "Sword" },
 			{"Stone", "Chisel" },
-			//{"Stone", "Hammer & Chisel" },
 			{"Iron", "Pick" },
 			{"Magic", "Staff" }
 		};
 
+		private static readonly IDictionary<int, string> qualitiesByPoints = new Dictionary<int, string>
+		{
+			{0, "Shoddy"},
+			{1, "Standard" },
+			{2, "Durable" },
+			{3, "Strong" },
+			{4, "Indestructible" },
+			{5, "Godly" }
+		};
+
 		public string Name => $"{Quality} {Material} {Tool}";
 
-		private string Tool => toolsByResourceProduced[ResourceProduced];
+		public string Tool => toolsByResourceProduced[ResourceProduced];
 
 		private string Material
 		{
@@ -74,35 +83,11 @@ namespace Splendor
 		{
 			get
 			{
-				var costs = Costs.Values.ToList();
-				switch (costs.Count)
-				{
-					case 4:
-						return costs.Max() < 3 ? "Shoddy" : "Strong";
-					case 3:
-						return costs.Sum() == 5
-							? (costs.Max() < 3 ? "Shoddy" : "Shoddy Braced")
-							: (costs.Max() < 4 ? "Standard" : (costs.Max() < 6 ? "Durable Braced" : "Indestructible Braced"));
-					case 2:
-						return costs.Max() < 3 ? "Shoddy" : (costs.Max() < 6 ? "Durable" : "Godly");
-					case 1:
-						switch (costs.Single())
-						{
-							case 3:
-								return "Shoddy";
-							case 4:
-								return "Standard";
-							case 5:
-								return "Durable";
-							case 6:
-								return "Strong";
-							case 7:
-								return "Indestructible";
-							default:
-								return null;
-						}
-				}
-				return "Shoddy";
+				var highestCost = Costs.Values.Max();
+				var lowestCost = Costs.Values.Min();
+				var isBraced = Costs.Count == 3 && (highestCost - lowestCost > 1);
+				var quality = qualitiesByPoints[Points];
+				return isBraced ? quality + " Braced" : quality;
 			}
 		}
 	}

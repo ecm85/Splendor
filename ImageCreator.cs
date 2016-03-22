@@ -1,37 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Splendor
 {
-	public static class ImageCreator
+	public class ImageCreator
 	{
 		//page: 8.5x11 = 816 * 1056
 		//card: 2.5x3.5 = 240 * 336
 		private const int cardWidth = 240;
 		private const int cardHeight = 336;
 
-		public static Image CreateCardImage(NewCard newCard)
+		public Image CreateCardImage(NewCard newCard)
 		{
 
 			var cardBitmap = new Bitmap(cardWidth, cardHeight);
 			var graphics = Graphics.FromImage(cardBitmap);
 			PrintCardBorder(graphics);
 			PrintCardName(newCard, cardWidth, graphics);
+			PrintToolImage(newCard, graphics);
+			PrintScaledImage(graphics, newCard.ResourceProduced, cardWidth - 52, 50, 50, 50);
+			PrintScaledImage(graphics, $"{newCard.Tool} BW", 2, 50, 50, 50);
+			var costList = newCard.Costs.ToList();
+			for (var costIndex = 0; costIndex < costList.Count; costIndex++)
+			{
+				var cost = costList[costIndex];
+				PrintBigString(graphics, cost.Value.ToString(), -10, cardHeight - (costIndex * 50) - 100);
+				PrintScaledImage(graphics, cost.Key, 50, cardHeight - (costIndex * 50) - 60, 50, 50);
+			}
+			PrintPlusSign(graphics);
 			return cardBitmap;
 		}
 
-		private static void PrintCardBorder(Graphics graphics)
+		private void PrintPlusSign(Graphics graphics)
 		{
-			var borderPen = new Pen(Color.Blue);
-			const int cardCornerRadius = 5;
-			graphics.DrawRoundedRectangle(borderPen, 0, 0, cardWidth - 1, cardHeight - 1, cardCornerRadius);
+			PrintBigString(graphics, "+", cardWidth - 112, 15);
 		}
 
-		private static void PrintCardName(NewCard newCard, int cardWidth, Graphics graphics)
+		private static void PrintBigString(Graphics graphics, string text, int x, int y)
+		{
+			var fontFamily = new FontFamily("Papyrus");
+			const int fontSize = 60;
+			var font = new Font(fontFamily, fontSize);
+			var brush = new SolidBrush(Color.Black);
+			graphics.DrawString(text, font, brush, x, y);
+		}
+
+		private static void PrintToolImage(NewCard newCard, Graphics graphics)
+		{
+			PrintScaledImage(graphics, newCard.Tool, 0, 100, cardWidth, cardWidth);
+		}
+
+		private static void PrintScaledImage(Graphics graphics, string fileName, int x, int y, int width, int height)
+		{
+			using (var srcImage = Image.FromFile($"Images\\{fileName}.png"))
+			{
+				graphics.SmoothingMode = SmoothingMode.AntiAlias;
+				graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+				graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+				graphics.DrawImage(srcImage, new Rectangle(x, y, width, height));
+			}
+		}
+
+		private void PrintCardBorder(Graphics graphics)
+		{
+			var brush = new SolidBrush(Color.BurlyWood);
+			const int cardCornerRadius = 5;
+			graphics.FillRoundedRectangle(brush, 0, 0, cardWidth - 1, cardHeight - 1, cardCornerRadius);
+		}
+
+		private void PrintCardName(NewCard newCard, int cardWidth, Graphics graphics)
 		{
 			var fontFamily = new FontFamily("Papyrus");
 			const int fontSize = 14;
