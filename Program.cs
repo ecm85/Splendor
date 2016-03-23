@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Splendor
 {
-	//TODO: Change bone image and/or fix backgrounds
+	//TODO: Change bone image and/or fix backgrounds (and check + sign on bone)
 	//TODO: Quest cards
 	//TODO: Player aids and Quest aid
 	//			player aid:
@@ -14,7 +14,6 @@ namespace Splendor
 	//			Backpack w/ 10 slots?
 	//			Quest aid:
 	//				side 1: message about quests
-	//TODO: Add Plus icon to resource produced
 	class Program
 	{
 		private static readonly Dictionary<string, string> abbreviatedColorMap = new Dictionary<string, string>

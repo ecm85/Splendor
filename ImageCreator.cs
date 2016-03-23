@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -144,7 +145,7 @@ namespace Splendor
 
 		private static void PrintResourceProduced(NewCard newCard, Graphics graphics)
 		{
-			PrintScaledImage(graphics, newCard.ResourceProduced, cardWidth - 65, 65, 50, 50);
+			PrintImageWithText(graphics, newCard.ResourceProduced, cardWidth - 65, 65, 50, "+");
 		}
 
 		private static void PrintToolIcon(NewCard newCard, Graphics graphics)
@@ -156,15 +157,18 @@ namespace Splendor
 		{
 			var costList = newCard.Costs.ToList();
 			for (var costIndex = 0; costIndex < costList.Count; costIndex++)
-			{
-				var cost = costList[costIndex];
-				PrintScaledImage(graphics, cost.Key, 12, cardHeight - (costIndex*50) - 70, 50, 50);
-				var path = new GraphicsPath();
-				path.AddString(cost.Value.ToString(), new FontFamily("Arial"), 0, cardCostSize,
-					new PointF(11, cardHeight - (costIndex*50) - 50), new StringFormat());
-				graphics.FillPath(Brushes.White, path);
-				graphics.DrawPath(new Pen(Color.Black, .5f), path);
-			}
+				PrintImageWithText(graphics, costList[costIndex].Key, 12, cardHeight - (costIndex*50) - 70, 50, costList[costIndex].Value.ToString());
+		}
+
+		private static void PrintImageWithText(Graphics graphics, string fileName, int imageX, int imageY, int imageSide,
+			string text)
+		{
+			PrintScaledImage(graphics, fileName, imageX, imageY, imageSide, imageSide);
+			var path = new GraphicsPath();
+			path.AddString(text, new FontFamily("Arial"), 0, cardCostSize,
+				new PointF(imageX - 1, imageY + 20), new StringFormat());
+			graphics.FillPath(Brushes.White, path);
+			graphics.DrawPath(new Pen(Color.Black, .5f), path);
 		}
 
 		private void PrintPoints(Graphics graphics, NewCard newCard)
