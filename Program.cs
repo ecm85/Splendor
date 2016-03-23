@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Splendor
 {
-	//TODO: Change resources to all be transparent backgrounds, and/or add my own standard one
+	//TODO: Change bone image and/or fix backgrounds
 	//TODO: Quest cards
 	//TODO: Player aids and Quest aid
 	//TODO: Shrink tool picture and place in hole?
