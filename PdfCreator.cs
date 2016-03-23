@@ -12,6 +12,11 @@ namespace Splendor
 	{
 		public static PdfDocument CreatePdfDocument(IList<Image> images)
 		{
+			const int pageWidth = 816*72/96;
+			const int pageHeight = 1056*72/96;
+			var firstXImage = XImage.FromGdiPlusImage(images.First());
+			var horizontalWhiteSpace = (pageWidth - (3*firstXImage.PointWidth))/4;
+			var verticalWhiteSpace = (pageHeight - (3*firstXImage.PointHeight))/4;
 			var document = new PdfDocument();
 			var remainingImages = images.ToList();
 			while (remainingImages.Any())
@@ -28,8 +33,8 @@ namespace Splendor
 					var row = index % 3;
 					var column = index / 3;
 
-					var x = (row * (xImage.PointWidth + 15)) + 15;
-					var y = (column * (xImage.PointHeight + 8)) + 8;
+					var x = (row * (xImage.PointWidth + horizontalWhiteSpace)) + horizontalWhiteSpace;
+					var y = (column * (xImage.PointHeight + verticalWhiteSpace)) + verticalWhiteSpace;
 
 					xGraphics.DrawImage(xImage, x, y);
 				}

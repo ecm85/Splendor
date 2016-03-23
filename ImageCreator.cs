@@ -20,6 +20,7 @@ namespace Splendor
 			PrintCardBorder(graphics, null);
 			DrawIconPentagon(graphics);
 			PrintTier(graphics, tier);
+			PrintGameTitle(graphics);
 			return cardBackBitmap;
 		}
 
@@ -66,6 +67,28 @@ namespace Splendor
 					Alignment = StringAlignment.Center,
 					LineAlignment = StringAlignment.Center
 				});
+		}
+
+		private void PrintGameTitle(Graphics graphics)
+		{
+			var font = new Font(new FontFamily("Cambria"), 35);
+			var brush = new SolidBrush(Color.Black);
+			var stringFormat = new StringFormat()
+			{
+				Alignment = StringAlignment.Center
+			};
+			graphics.DrawString(
+				"Splendor",
+				font,
+				brush,
+				new RectangleF(8, 13, cardWidth - 8, 100),
+				stringFormat);
+			graphics.DrawString(
+				"Forge",
+				font,
+				brush,
+				new RectangleF(8, cardHeight - 83, cardWidth - 8, 100),
+				stringFormat);
 		}
 
 		public Image CreateCardImage(NewCard newCard)
