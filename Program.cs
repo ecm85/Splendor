@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using PdfSharp.Pdf;
 
 namespace Splendor
 {
 	//TODO: Remove watermark from all images
 	//TODO: Change resources to all be transparent backgrounds, and/or add my own standard one
-	//TODO: Add card backs
 	//TODO: Quest cards
 	//TODO: Player aids and Quest aid
 	//TODO: Shrink tool picture and place in hole?
@@ -42,10 +39,14 @@ namespace Splendor
 			var paths = new List<string>();
 			foreach (var cardGroup in cardsGroupedByTier)
 			{
-				var pdf = PdfCreator.CreatePdfDocument(cardGroup.Select(imageCreator.CreateCardImage).ToList());
-				var path = $"c:\\delete\\Splendor Tier {cardGroup.Key} Cards.pdf";
-				pdf.Save(path);
-				paths.Add(path);
+				var cardPdf = PdfCreator.CreatePdfDocument(cardGroup.Select(imageCreator.CreateCardImage).ToList());
+				var cardPath = $"c:\\delete\\Splendor Tier {cardGroup.Key} Cards.pdf";
+				cardPdf.Save(cardPath);
+				paths.Add(cardPath);
+				var cardBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreateCardBackImage(cardGroup.Key)).ToList());
+				var cardBackPath = $"c:\\delete\\Splendor Tier {cardGroup.Key} Card Backs.pdf";
+				cardBackPdf.Save(cardBackPath);
+				paths.Add(cardBackPath);
 			}
 			foreach (var path in paths)
 				Process.Start(path);
@@ -76,20 +77,6 @@ namespace Splendor
 					Tier = card.Tier
 				};
 			}).ToList();
-
-			//var mostWords = "";
-			//var mostWordCount = 0;
-			//foreach (var newCard in newCards)
-			//{
-			//	Console.WriteLine(newCard.Name);
-			//	var tokens = newCard.Name.Split(' ');
-			//	if (tokens.Length > mostWordCount)
-			//	{
-			//		mostWordCount = tokens.Length;
-			//		mostWords = newCard.Name;
-			//	}
-			//}
-			//Console.WriteLine($"Most words: {mostWordCount}, in: {mostWords}");
 
 			return newCards;
 		}
