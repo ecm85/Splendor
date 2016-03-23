@@ -3,9 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using PdfSharp.Pdf;
 
 namespace Splendor
 {
+	//TODO: Remove watermark from all images
+	//TODO: Change resources to all be transparent backgrounds, and/or add my own standard one
+	//TODO: Add card backs
+	//TODO: Quest cards
+	//TODO: Player aids and Quest aid
+	//TODO: Shrink tool picture and place in hole?
+	//TODO: Move/change icon?
 	class Program
 	{
 		private static readonly Dictionary<string, string> abbreviatedColorMap = new Dictionary<string, string>
@@ -30,22 +38,30 @@ namespace Splendor
 		{
 			var imageCreator = new ImageCreator();
 			var newCards = ConvertCardsToNewCards();
-			var pdf = PdfCreator.CreatePdfDocument(newCards.Select(imageCreator.CreateCardImage).ToList());
-			const string path = "c:\\delete\\test.pdf";
-			pdf.Save(path);
-			Process.Start(path);
+			var cardsGroupedByTier = newCards.GroupBy(newCard => newCard.Tier);
+			var paths = new List<string>();
+			foreach (var cardGroup in cardsGroupedByTier)
+			{
+				var pdf = PdfCreator.CreatePdfDocument(cardGroup.Select(imageCreator.CreateCardImage).ToList());
+				var path = $"c:\\delete\\Splendor Tier {cardGroup.Key} Cards.pdf";
+				pdf.Save(path);
+				paths.Add(path);
+			}
+			foreach (var path in paths)
+				Process.Start(path);
 		}
 
-		private static IEnumerable<NewCard> ConvertCardsToNewCards()
+		private static IList<NewCard> ConvertCardsToNewCards()
 		{
 			var strings = File.ReadAllLines("c:\\delete\\input");
 			var cards = strings
 				.Select(s => s.Split('\t'))
 				.Select(tokens => new Card
 				{
-					ResourceProduced = tokens[1],
-					Costs = tokens[2].Split('+').ToDictionary(token => CharToString(token[1]), token => CharToInt(token[0])),
-					Points = string.IsNullOrWhiteSpace(tokens[0]) ? 0 : int.Parse(tokens[0])
+					ResourceProduced = tokens[2],
+					Costs = tokens[3].Split('+').ToDictionary(token => CharToString(token[1]), token => CharToInt(token[0])),
+					Points = string.IsNullOrWhiteSpace(tokens[1]) ? 0 : int.Parse(tokens[1]),
+					Tier = string.IsNullOrWhiteSpace(tokens[0]) ? 0 : int.Parse(tokens[0])
 				})
 				.ToList();
 
@@ -56,9 +72,10 @@ namespace Splendor
 				{
 					ResourceProduced = TransformColorProduced(card.ResourceProduced),
 					Costs = transformedCosts,
-					Points = card.Points
+					Points = card.Points,
+					Tier = card.Tier
 				};
-			});
+			}).ToList();
 
 			//var mostWords = "";
 			//var mostWordCount = 0;

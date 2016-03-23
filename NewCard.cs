@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Splendor
@@ -12,7 +13,7 @@ namespace Splendor
 			{ "Dragonbone", "Dragonbone" },
 			{ "Wood", "Wooden" },
 			{ "Stone", "Stone" },
-			{ "Magic", "Magic" }
+			{ "Magic", "Conjured" }
 		};
 
 		private static readonly IDictionary<Tuple<string, string>, string>  doubleMaterialsByResources = new Dictionary<Tuple<string, string>, string>
@@ -48,9 +49,20 @@ namespace Splendor
 			{5, "Godly" }
 		};
 
+		private static readonly IDictionary<string, Color> colorsByResourceProduced = new Dictionary<string, Color>
+		{
+			{"Wood", Color.SaddleBrown },
+			{"Dragonbone", Color.White },
+			{"Stone", Color.Gray },
+			{"Iron", Color.Silver },
+			{"Magic", Color.LightSkyBlue },
+		};
+
 		public string Name => $"{Quality} {Material} {Tool}";
 
 		public string Tool => toolsByResourceProduced[ResourceProduced];
+
+		public Color Color => colorsByResourceProduced[ResourceProduced];
 
 		private string Material
 		{
