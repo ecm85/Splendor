@@ -8,8 +8,13 @@ namespace Splendor
 	//TODO: Change bone image and/or fix backgrounds
 	//TODO: Quest cards
 	//TODO: Player aids and Quest aid
-	//TODO: Shrink tool picture and place in hole?
-	//TODO: Move/change icon?
+	//			player aid:
+	//				side 1: actions on a day, check for quests
+	//				side 2: 5 resources and which tools produce them
+	//			Backpack w/ 10 slots?
+	//			Quest aid:
+	//				side 1: message about quests
+	//TODO: Add Plus icon to resource produced
 	class Program
 	{
 		private static readonly Dictionary<string, string> abbreviatedColorMap = new Dictionary<string, string>

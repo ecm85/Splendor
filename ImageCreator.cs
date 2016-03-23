@@ -139,7 +139,7 @@ namespace Splendor
 
 		private static void PrintToolImage(NewCard newCard, Graphics graphics)
 		{
-			PrintScaledImage(graphics, newCard.Tool, 15, 115, cardWidth - 26, cardWidth - 26);
+			PrintScaledImage(graphics, newCard.Tool, 65, 130, cardWidth - 130, cardWidth - 130);
 		}
 
 		private static void PrintResourceProduced(NewCard newCard, Graphics graphics)
