@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace Splendor
 {
-	//TODO: Remove watermark from all images
 	//TODO: Change resources to all be transparent backgrounds, and/or add my own standard one
 	//TODO: Quest cards
 	//TODO: Player aids and Quest aid
