@@ -17,7 +17,7 @@ namespace Splendor
 		{
 			var bitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
-			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels);
+			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, Color.BurlyWood);
 			var fontFamily = new FontFamily("Tempus Sans ITC");
 			graphics.DrawString(quest.Name, new Font(fontFamily, 11, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF(15, 15, cardShortSideInPixels - 30, 45), new StringFormat { Alignment = StringAlignment.Center});
 			graphics.DrawString(quest.Description, new Font(fontFamily, 9), new SolidBrush(Color.Black), new RectangleF(15, 30, cardShortSideInPixels - 30, 60), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center});
@@ -41,7 +41,7 @@ namespace Splendor
 		{
 			var bitmap = new Bitmap(cardLongSideInPixels, cardShortSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
-			PrintCardBorder(graphics, null, cardLongSideInPixels, cardShortSideInPixels);
+			PrintCardBorder(graphics, null, cardLongSideInPixels, cardShortSideInPixels, Color.BurlyWood);
 			var playerAidString = "Each day, you may take one of the following actions:" +
 				"\r\n\u2022  Gather Resources: gather 3 different resources" +
 				"\r\n\u2022  Seek Resources: gather 2 of the same resource [as long as there is an abundance (4+)]" +
@@ -57,7 +57,7 @@ namespace Splendor
 		{
 			var bitmap = new Bitmap(cardLongSideInPixels, cardShortSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
-			PrintCardBorder(graphics, null, cardLongSideInPixels, cardShortSideInPixels);
+			PrintCardBorder(graphics, null, cardLongSideInPixels, cardShortSideInPixels, Color.BurlyWood);
 			PrintLimitsReminder(graphics);
 
 			var firstX = 45;
@@ -125,11 +125,27 @@ namespace Splendor
 		{
 			var cardBackBitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(cardBackBitmap);
-			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels);
+
+			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, GetTierBackColor(tier));
 			DrawIconPentagon(graphics);
 			PrintTier(graphics, tier);
 			PrintGameTitle(graphics);
 			return cardBackBitmap;
+		}
+
+		private Color GetTierBackColor(int tier)
+		{
+			switch (tier)
+			{
+				case 1:
+					return Color.FromArgb(255, 150, 90, 56);
+				case 2:
+					return Color.FromArgb(255, 168, 168, 168);
+				case 3:
+					return Color.FromArgb(255, 201, 137, 16);
+				default:
+					throw new InvalidOperationException("Invalid tier!");
+			}
 		}
 
 		private void DrawIconPentagon(Graphics graphics)
@@ -203,7 +219,7 @@ namespace Splendor
 		{
 			var cardBitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(cardBitmap);
-			PrintCardBorder(graphics, newCard.Color, cardShortSideInPixels, cardLongSideInPixels);
+			PrintCardBorder(graphics, newCard.Color, cardShortSideInPixels, cardLongSideInPixels, Color.BurlyWood);
 			PrintCardName(newCard, cardShortSideInPixels, graphics);
 			PrintToolImage(newCard, graphics);
 			PrintResourceProduced(newCard, graphics);
@@ -214,12 +230,12 @@ namespace Splendor
 			return cardBitmap;
 		}
 
-		private void PrintCardBorder(Graphics graphics, Color? middleBorderColor, int topSideInPixels, int leftSideInPixels)
+		private void PrintCardBorder(Graphics graphics, Color? middleBorderColor, int topSideInPixels, int leftSideInPixels, Color backgroundColor)
 		{
 			graphics.FillRoundedRectangle(new SolidBrush(Color.Black), 0, 0, topSideInPixels - 1, leftSideInPixels - 1, 10);
 			if (middleBorderColor.HasValue)
 				graphics.FillRoundedRectangle(new SolidBrush(middleBorderColor.Value), 5, 5, topSideInPixels - 11, leftSideInPixels - 11, 10);
-			graphics.FillRoundedRectangle(new SolidBrush(Color.BurlyWood), 10, 10, topSideInPixels-21, leftSideInPixels-21, 10);
+			graphics.FillRoundedRectangle(new SolidBrush(backgroundColor), 10, 10, topSideInPixels-21, leftSideInPixels-21, 10);
 		}
 
 		private void PrintCardName(NewCard newCard, int cardWidth, Graphics graphics)

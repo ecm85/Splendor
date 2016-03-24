@@ -12,8 +12,6 @@ namespace Splendor
 	//TODO: Backpack w/ 10 slots?
 	//TODO: Add points to quest cards
 
-	//TODO: Change background color on tier backs
-
 	//TODO: General font formatting on all places, outlines or not, placement next to pictures, etc
 	//TODO: Center points in wreath
 	//TODO: Tweak formatting on player aid side 1 - add bold, more splash/color somehow, etc
