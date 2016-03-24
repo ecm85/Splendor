@@ -12,7 +12,10 @@ namespace Splendor
 	//				side 1: message about quests
 	//TODO: Backpack w/ 10 slots?
 	//TODO: Tweak formatting on player aid side 1
-	//TODO: Center points in wreath, change to icon
+	//TODO: Center points in wreath, change to outline font
+	//TODO: invesigate better fonts
+	//TODO: Add wreaths to quest cards
+	//TODO: Tweak formatting on Quest card costs
 
 	class Program
 	{
@@ -44,6 +47,7 @@ namespace Splendor
 		{
 			var paths = new List<string>();
 			var imageCreator = new ImageCreator();
+
 			var newCards = ConvertCardsToNewCards();
 			var cardsGroupedByTier = newCards.GroupBy(newCard => newCard.Tier);
 			foreach (var cardGroup in cardsGroupedByTier)
@@ -57,14 +61,21 @@ namespace Splendor
 				cardBackPdf.Save(cardBackPath);
 				paths.Add(cardBackPath);
 			}
+
 			var playerAidFrontPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidFront()).ToList(), PageOrientation.Landscape);
 			var playerAidFrontPath = "c:\\delete\\player aid front.pdf";
 			playerAidFrontPdf.Save(playerAidFrontPath);
 			paths.Add(playerAidFrontPath);
+
 			var playerAidBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidBack()).ToList(), PageOrientation.Landscape);
 			var playerAidBackPath = "c:\\delete\\player aid back.pdf";
 			playerAidBackPdf.Save(playerAidBackPath);
 			paths.Add(playerAidBackPath);
+
+			var questsFrontPdf = PdfCreator.CreatePdfDocument(QuestFactory.CreateQuests().Select(quest => imageCreator.CreateQuestFront(quest)).ToList(), PageOrientation.Portrait);
+			var questsFrontPath = "c:\\delete\\quests.pdf";
+			questsFrontPdf.Save(questsFrontPath);
+			paths.Add(questsFrontPath);
 
 			foreach (var path in paths)
 				Process.Start(path);
