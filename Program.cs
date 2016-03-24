@@ -12,25 +12,32 @@ namespace Splendor
 	//				side 1: message about quests
 	//TODO: Backpack w/ 10 slots?
 	//TODO: Tweak formatting on player aid side 1
+	//TODO: Center points in wreath, change to icon
 
 	class Program
 	{
+		//r = red = axe = wood
+		//g = green = chisel = stone
+		//k = black = sword = bone
+		//w = white = staff = magic
+		//u = blue = pick = iron
+
 		private static readonly Dictionary<string, string> abbreviatedColorMap = new Dictionary<string, string>
 		{
-			{ "w", "Iron" },
+			{ "w", "Magic" },
 			{ "k", "Dragonbone" },
-			{ "g", "Wood" },
-			{ "r", "Magic" },
-			{ "u", "Stone" }
+			{ "g", "Stone" },
+			{ "r", "Wood" },
+			{ "u", "Iron" }
 		};
 
 		private static readonly Dictionary<string, string> colorMap = new Dictionary<string, string>
 		{
-			{ "white", "Iron" },
+			{ "white", "Magic" },
 			{ "black", "Dragonbone" },
-			{ "green", "Wood" },
-			{ "red", "Magic" },
-			{ "blue", "Stone" }
+			{ "green", "Stone" },
+			{ "red", "Wood" },
+			{ "blue", "Iron" }
 		};
 
 		static void Main()
