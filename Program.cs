@@ -6,10 +6,8 @@ using PdfSharp;
 
 namespace Splendor
 {
-	//TODO: Quest cards
-	//TODO: Quest aid
-	//			Quest aid:
-	//				side 1: message about quests
+	//TODO: Quest backs
+	//TODO: Quest aid] - message about quests
 	//TODO: Backpack w/ 10 slots?
 	//TODO: Tweak formatting on player aid side 1
 	//TODO: Center points in wreath, change to outline font
