@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,13 +8,15 @@ using PdfSharp;
 namespace Splendor
 {
 	//TODO: Quest backs
-	//TODO: Quest aid] - message about quests
+	//TODO: Quest aid - message about quests
 	//TODO: Backpack w/ 10 slots?
-	//TODO: Tweak formatting on player aid side 1
-	//TODO: Center points in wreath, change to outline font
-	//TODO: invesigate better fonts
-	//TODO: Add wreaths to quest cards
-	//TODO: Tweak formatting on Quest card costs
+	//TODO: Add points to quest cards
+
+	//TODO: Change background color on tier backs
+
+	//TODO: General font formatting on all places, outlines or not, placement next to pictures, etc
+	//TODO: Center points in wreath
+	//TODO: Tweak formatting on player aid side 1 - add bold, more splash/color somehow, etc
 
 	class Program
 	{
@@ -74,6 +77,11 @@ namespace Splendor
 			var questsFrontPath = "c:\\delete\\quests.pdf";
 			questsFrontPdf.Save(questsFrontPath);
 			paths.Add(questsFrontPath);
+
+			Console.Write("Open PDFs (Y/N)?");
+			var response = Console.ReadKey();
+			if (response.Key != ConsoleKey.Y)
+				return;
 
 			foreach (var path in paths)
 				Process.Start(path);
