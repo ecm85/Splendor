@@ -2,18 +2,17 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using PdfSharp;
 
 namespace Splendor
 {
-	//TODO: Change bone image and/or fix backgrounds (and check + sign on bone)
 	//TODO: Quest cards
-	//TODO: Player aids and Quest aid
-	//			player aid:
-	//				side 1: actions on a day, check for quests
-	//				side 2: 5 resources and which tools produce them
-	//			Backpack w/ 10 slots?
+	//TODO: Quest aid
 	//			Quest aid:
 	//				side 1: message about quests
+	//TODO: Backpack w/ 10 slots?
+	//TODO: Tweak formatting on player aid side 1
+
 	class Program
 	{
 		private static readonly Dictionary<string, string> abbreviatedColorMap = new Dictionary<string, string>
@@ -36,21 +35,30 @@ namespace Splendor
 
 		static void Main()
 		{
+			var paths = new List<string>();
 			var imageCreator = new ImageCreator();
 			var newCards = ConvertCardsToNewCards();
 			var cardsGroupedByTier = newCards.GroupBy(newCard => newCard.Tier);
-			var paths = new List<string>();
 			foreach (var cardGroup in cardsGroupedByTier)
 			{
-				var cardPdf = PdfCreator.CreatePdfDocument(cardGroup.Select(imageCreator.CreateCardImage).ToList());
+				var cardPdf = PdfCreator.CreatePdfDocument(cardGroup.Select(imageCreator.CreateCardImage).ToList(), PageOrientation.Portrait);
 				var cardPath = $"c:\\delete\\Splendor Tier {cardGroup.Key} Cards.pdf";
 				cardPdf.Save(cardPath);
 				paths.Add(cardPath);
-				var cardBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreateCardBackImage(cardGroup.Key)).ToList());
+				var cardBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreateCardBackImage(cardGroup.Key)).ToList(), PageOrientation.Portrait);
 				var cardBackPath = $"c:\\delete\\Splendor Tier {cardGroup.Key} Card Backs.pdf";
 				cardBackPdf.Save(cardBackPath);
 				paths.Add(cardBackPath);
 			}
+			var playerAidFrontPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidFront()).ToList(), PageOrientation.Landscape);
+			var playerAidFrontPath = "c:\\delete\\player aid front.pdf";
+			playerAidFrontPdf.Save(playerAidFrontPath);
+			paths.Add(playerAidFrontPath);
+			var playerAidBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidBack()).ToList(), PageOrientation.Landscape);
+			var playerAidBackPath = "c:\\delete\\player aid back.pdf";
+			playerAidBackPdf.Save(playerAidBackPath);
+			paths.Add(playerAidBackPath);
+
 			foreach (var path in paths)
 				Process.Start(path);
 		}

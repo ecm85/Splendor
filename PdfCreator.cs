@@ -10,13 +10,9 @@ namespace Splendor
 {
 	public static class PdfCreator
 	{
-		public static PdfDocument CreatePdfDocument(IList<Image> images)
+		public static PdfDocument CreatePdfDocument(IList<Image> images, PageOrientation pageOrientation)
 		{
-			const int pageWidth = 816*72/96;
-			const int pageHeight = 1056*72/96;
 			var firstXImage = XImage.FromGdiPlusImage(images.First());
-			var horizontalWhiteSpace = (pageWidth - (3*firstXImage.PointWidth))/4;
-			var verticalWhiteSpace = (pageHeight - (3*firstXImage.PointHeight))/4;
 			var document = new PdfDocument();
 			var remainingImages = images.ToList();
 			while (remainingImages.Any())
@@ -24,6 +20,11 @@ namespace Splendor
 				var nextNine = remainingImages.Take(9).ToList();
 				var page = document.AddPage();
 				page.Size = PageSize.Letter;
+				page.Orientation = pageOrientation;
+				var pageWidth = page.Width;
+				var pageHeight = page.Height;
+				var horizontalWhiteSpace = (pageWidth - (3*firstXImage.PointWidth))/4;
+				var verticalWhiteSpace = (pageHeight - (3*firstXImage.PointHeight))/4;
 				var xGraphics = XGraphics.FromPdfPage(page);
 
 				for (var index = 0; index < 9 && index < nextNine.Count; index++)

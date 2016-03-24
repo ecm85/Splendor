@@ -65,6 +65,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\arrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\Axe BW.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
