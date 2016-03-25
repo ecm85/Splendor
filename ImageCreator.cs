@@ -35,6 +35,7 @@ namespace Splendor
 			graphics.DrawString(quest.Description, new Font(fontFamily, 9), new SolidBrush(Color.Black), new RectangleF(15, 30, cardShortSideInPixels - 30, 60), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center});
 			PrintScaledJpg(graphics, quest.Image, 15, 130, cardShortSideInPixels - 30, cardLongSideInPixels - (130 + 15));
 			PrintCostsForQuest(graphics, quest);
+			PrintPointsForQuest(graphics, quest);
 			return bitmap;
 		}
 
@@ -44,9 +45,9 @@ namespace Splendor
 				PrintImageWithText(graphics, $"{quest.ToolRequirements[toolIndex]} BW", 15 + toolIndex * (40 + 5), 80, 40, quest.ToolCountRequired.ToString(), 5, 5);
 		}
 
-		private static void PrintPointsForQuest()
+		private static void PrintPointsForQuest(Graphics graphics, Quest quest)
 		{
-
+			PrintPoints(graphics, quest.Points, cardShortSideInPixels - 70, 80);
 		}
 
 		public Image CreateQuestAidFront()
@@ -337,11 +338,19 @@ namespace Splendor
 
 		private void PrintPointsForTool(Graphics graphics, NewCard newCard)
 		{
+			PrintPoints(graphics, newCard.Points, cardShortSideInPixels - 68, cardLongSideInPixels - 65);
+		}
+
+		private static void PrintPoints(Graphics graphics, int points, int x, int y)
+		{
 			var fontFamily = new FontFamily("Tempus Sans ITC");
 			var font = new Font(fontFamily, 25);
 			var brush = new SolidBrush(Color.Black);
-			PrintScaledPng(graphics, "Wreath", cardShortSideInPixels - 68, cardLongSideInPixels - 65, 65, 50);
-			graphics.DrawString(newCard.Points.ToString(), font, brush, cardShortSideInPixels - 50, cardLongSideInPixels - 73);
+			PrintScaledPng(graphics, "Wreath", x, y, 65, 50);
+			graphics.DrawString(points.ToString(), font, brush, new RectangleF(x, y, 65, 50), new StringFormat
+			{
+				Alignment = StringAlignment.Center
+			});
 		}
 
 		private static void PrintScaledPng(Graphics graphics, string fileName, int x, int y, int width, int height)
