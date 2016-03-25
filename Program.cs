@@ -8,7 +8,6 @@ using PdfSharp;
 namespace Splendor
 {
 	//TODO: Backpack w/ 10 slots?
-	//TODO: New bone image
 
 	//TODO: General font formatting on all places, outlines or not, placement next to pictures, etc
 	//TODO: Center points in wreath
