@@ -49,6 +49,33 @@ namespace Splendor
 
 		}
 
+		public Image CreateQuestAidFront()
+		{
+			var bitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var graphics = Graphics.FromImage(bitmap);
+			var brush = new SolidBrush(Color.Black);
+
+			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, Color.BurlyWood);
+
+			var questAidTitle = "Completing Quests";
+			var titleRectangle = new RectangleF(15, 15, cardShortSideInPixels - 30, cardLongSideInPixels - 30);
+			var titleFont = new Font(new FontFamily("Tempus Sans ITC"), 12, FontStyle.Bold);
+			graphics.DrawString(questAidTitle, titleFont, brush, titleRectangle, new StringFormat {Alignment = StringAlignment.Center});
+
+			var textRectangle = new RectangleF(15, 35, cardShortSideInPixels - 30, cardLongSideInPixels - 50);
+			var textFont = new Font(new FontFamily("Tempus Sans ITC"), 10);
+
+			var questAidString = "After completing your action each day, check if you have the tools depicted on each quest." +
+				"\r\n\r\nIf you do, equip your villagers with those tools and they will complete the quest for you. Take the quest card and place in front of you." +
+				"\r\n\r\nDon't worry, they'll return the tools in the same condition (more or less). ";
+			graphics.DrawString(questAidString, textFont, brush, textRectangle);
+
+			var questSetupString = "Setup: Reveal 3 Quest cards and return the rest to the box. ";
+			graphics.DrawString(questSetupString, textFont, brush, textRectangle, new StringFormat {LineAlignment = StringAlignment.Far});
+
+			return bitmap;
+		}
+
 		public Image CreatePlayerAidFront()
 		{
 			var bitmap = new Bitmap(cardLongSideInPixels, cardShortSideInPixels);
@@ -57,8 +84,8 @@ namespace Splendor
 			var playerAidString = "Each day, you may take one of the following actions:" +
 				"\r\n\u2022  Gather Resources: gather 3 different resources" +
 				"\r\n\u2022  Seek Resources: gather 2 of the same resource [as long as there is an abundance (4+)]" +
-				"\r\n\u2022  Craft: Take a Tool from the display, place in front of you and return the depicted resources to the supply" +
 				"\r\n\u2022  Find Blueprint: Take a Tool from the display into your hand and take one (1) gold [if available]" +
+				"\r\n\u2022  Craft: Take a Tool from the display, place in front of you and return the depicted resources to the supply" +
 				"\r\n\r\nAfter your action, check if you have the tools to complete any quests.";
 			graphics.DrawString(playerAidString, new Font(new FontFamily("Tempus Sans ITC"), 10), new SolidBrush(Color.Black), new RectangleF(15, 15, cardLongSideInPixels - 20, cardShortSideInPixels - 15), new StringFormat());
 			PrintLimitsReminder(graphics);
@@ -133,7 +160,7 @@ namespace Splendor
 			graphics.DrawString(label2, font, brush, label2Rectangle, stringFormat);
 		}
 
-		public Image CreateCardBackImage(int tier)
+		public Image CreateToolCardBack(int tier)
 		{
 			var cardBackBitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(cardBackBitmap);
@@ -231,7 +258,7 @@ namespace Splendor
 				stringFormat);
 		}
 
-		public Image CreateCardImage(NewCard newCard)
+		public Image CreateToolCardFront(NewCard newCard)
 		{
 			var cardBitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(cardBitmap);

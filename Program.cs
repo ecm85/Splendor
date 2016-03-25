@@ -7,7 +7,6 @@ using PdfSharp;
 
 namespace Splendor
 {
-	//TODO: Quest aid - message about quests
 	//TODO: Backpack w/ 10 slots?
 	//TODO: Add points to quest cards
 
@@ -50,33 +49,34 @@ namespace Splendor
 			var cardsGroupedByTier = newCards.GroupBy(newCard => newCard.Tier);
 			foreach (var cardGroup in cardsGroupedByTier)
 			{
-				var cardPdf = PdfCreator.CreatePdfDocument(cardGroup.Select(imageCreator.CreateCardImage).ToList(), PageOrientation.Portrait);
-				var cardPath = $"c:\\delete\\Splendor Tier {cardGroup.Key} Cards.pdf";
+				var cardPdf = PdfCreator.CreatePdfDocument(cardGroup.Select(imageCreator.CreateToolCardFront).ToList(), PageOrientation.Portrait);
+				var cardPath = $"c:\\delete\\Splendor Tier {cardGroup.Key} Tool Fronts.pdf";
 				cardPdf.Save(cardPath);
 				paths.Add(cardPath);
-				var cardBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreateCardBackImage(cardGroup.Key)).ToList(), PageOrientation.Portrait);
-				var cardBackPath = $"c:\\delete\\Splendor Tier {cardGroup.Key} Card Backs.pdf";
+				var cardBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreateToolCardBack(cardGroup.Key)).ToList(), PageOrientation.Portrait);
+				var cardBackPath = $"c:\\delete\\Splendor Tier {cardGroup.Key} Tool Backs.pdf";
 				cardBackPdf.Save(cardBackPath);
 				paths.Add(cardBackPath);
 			}
 
 			var playerAidFrontPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidFront()).ToList(), PageOrientation.Landscape);
-			var playerAidFrontPath = "c:\\delete\\player aid front.pdf";
+			var playerAidFrontPath = "c:\\delete\\Player Aid Front.pdf";
 			playerAidFrontPdf.Save(playerAidFrontPath);
 			paths.Add(playerAidFrontPath);
 
 			var playerAidBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidBack()).ToList(), PageOrientation.Landscape);
-			var playerAidBackPath = "c:\\delete\\player aid back.pdf";
+			var playerAidBackPath = "c:\\delete\\Player Aid Back.pdf";
 			playerAidBackPdf.Save(playerAidBackPath);
 			paths.Add(playerAidBackPath);
 
-			var questsFrontPdf = PdfCreator.CreatePdfDocument(QuestFactory.CreateQuests().Select(quest => imageCreator.CreateQuestFront(quest)).ToList(), PageOrientation.Portrait);
-			var questsFrontPath = "c:\\delete\\questsFront.pdf";
+			var questFrontImages = QuestFactory.CreateQuests().Select(quest => imageCreator.CreateQuestFront(quest)).Concat(new [] {imageCreator.CreateQuestAidFront()}).ToList();
+			var questsFrontPdf = PdfCreator.CreatePdfDocument(questFrontImages, PageOrientation.Portrait);
+			var questsFrontPath = "c:\\delete\\Quests Front.pdf";
 			questsFrontPdf.Save(questsFrontPath);
 			paths.Add(questsFrontPath);
 
 			var questsBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreateQuestBack()).ToList(), PageOrientation.Portrait);
-			var questsBackPath = "c:\\delete\\questsBack.pdf";
+			var questsBackPath = "c:\\delete\\Quests Back.pdf";
 			questsBackPdf.Save(questsBackPath);
 			paths.Add(questsBackPath);
 
