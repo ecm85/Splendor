@@ -10,6 +10,9 @@ namespace Splendor
 {
 	public static class PdfCreator
 	{
+		//page: 8.5x11 = 816 * 1056
+		private const float pageWidth = 8.5f;
+		private const float pageHeight = 11.0f;
 		public static void AddPagesToPdf(PdfDocument document, IList<Image> images, PageOrientation pageOrientation)
 		{
 			var firstXImage = XImage.FromGdiPlusImage(images.First());
