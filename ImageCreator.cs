@@ -15,14 +15,13 @@ namespace Splendor
 		private const int cardShortSideInPixels = (int)(shortSideDpi * cardShortSideInInches);
 		private const int cardLongSideInPixels = (int)(longSideDpi * cardLongSideInInches);
 
-		private int questBackTextSize = 40;
+		private const int questBackTextSize = 40;
 		private readonly Color standardCardBackgroundColor = Color.BurlyWood;
-		private string questBackText = "Quest";
+		private const string questBackText = "Quest";
 		private readonly FontFamily headerFontFamily = new FontFamily("Tempus Sans ITC");
 		private static readonly FontFamily bodyFontFamily = new FontFamily("Calibri");
 		private static readonly FontFamily cardBackFontFamily = new FontFamily("Cambria");
-		private int questFrontHeaderFontSize = 11;
-		private int borderPadding = 15;
+		private const int borderPadding = 12;
 
 		private readonly StringFormat horizontalCenterAlignment = new StringFormat { Alignment = StringAlignment.Center};
 		private readonly StringFormat fullCenterAlignment = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center};
@@ -30,6 +29,9 @@ namespace Splendor
 		private readonly StringFormat horizontalNearAlignment = new StringFormat {Alignment = StringAlignment.Near};
 		private readonly StringFormat horizontalFarAlignment = new StringFormat {Alignment = StringAlignment.Far};
 		private readonly SolidBrush blackBrush = new SolidBrush(Color.Black);
+		private const int questFrontHeaderFontSize = 14;
+		private const int questDescriptionFontSize = 12;
+		private const int questImageHeight = 130;
 
 		public Image CreateQuestBack()
 		{
@@ -48,19 +50,24 @@ namespace Splendor
 			var bitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
-			var headerFont = new Font(headerFontFamily, questFrontHeaderFontSize, FontStyle.Bold);
+			var headerFont = new Font(headerFontFamily, questFrontHeaderFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
 			graphics.DrawString(
 				quest.Name,
 				headerFont,
 				blackBrush,
-				new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 2 * borderPadding, borderPadding + 30), //TODO: Find out how big the rectangle needs to be, based on font size
+				new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 2 * borderPadding, headerFont.Height),
 				horizontalCenterAlignment);
-			var questDescriptionFontFamily = bodyFontFamily;
+			var questDescriptionFont = new Font(bodyFontFamily, questDescriptionFontSize, GraphicsUnit.Pixel);
 			graphics.DrawString(quest.Description,
-				new Font(questDescriptionFontFamily, 10),
+				questDescriptionFont,
 				blackBrush,
-				new RectangleF(10, 30, cardShortSideInPixels - 20, 60), fullCenterAlignment);
-			PrintScaledJpg(graphics, quest.Image, borderPadding, 130, cardShortSideInPixels - 30, cardLongSideInPixels - (130 + borderPadding));
+				new RectangleF(
+					borderPadding,
+					headerFont.Height + borderPadding,
+					cardShortSideInPixels - 2 * borderPadding,
+					questDescriptionFont.Height * 3),
+				horizontalCenterAlignment);
+			PrintScaledJpg(graphics, quest.Image, borderPadding, questImageHeight, cardShortSideInPixels - 2 * borderPadding, cardLongSideInPixels - (questImageHeight + borderPadding));
 			PrintCostsForQuest(graphics, quest);
 			PrintPointsForQuest(graphics, quest);
 			return bitmap;
@@ -151,17 +158,16 @@ namespace Splendor
 			var handLimitString = "Hand limit - 3";
 			var resourceLimitString = "Resource limit - 10";
 			var font = new Font(bodyFontFamily, 9);
-			var solidBrush = new SolidBrush(Color.Black);
 			graphics.DrawString(
 				handLimitString,
 				font,
-				solidBrush,
+				blackBrush,
 				new RectangleF(borderPadding, cardShortSideInPixels - (15 + borderPadding), cardLongSideInPixels - (15 + borderPadding), 50),
 				horizontalNearAlignment);
 			graphics.DrawString(
 				resourceLimitString,
 				font,
-				solidBrush,
+				blackBrush,
 				new RectangleF(borderPadding, cardShortSideInPixels - (15 + borderPadding), cardLongSideInPixels - (15 + borderPadding), 50),
 				horizontalFarAlignment);
 		}
