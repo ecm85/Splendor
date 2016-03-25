@@ -10,10 +10,10 @@ namespace Splendor
 {
 	public static class PdfCreator
 	{
-		public static PdfDocument CreatePdfDocument(IList<Image> images, PageOrientation pageOrientation)
+		public static void AddPagesToPdf(PdfDocument document, IList<Image> images, PageOrientation pageOrientation)
 		{
 			var firstXImage = XImage.FromGdiPlusImage(images.First());
-			var document = new PdfDocument();
+
 			var remainingImages = images.ToList();
 			while (remainingImages.Any())
 			{
@@ -42,7 +42,6 @@ namespace Splendor
 
 				remainingImages = remainingImages.Skip(9).ToList();
 			}
-			return document;
 		}
 	}
 }

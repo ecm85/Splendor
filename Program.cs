@@ -4,9 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using PdfSharp;
+using PdfSharp.Pdf;
 
 namespace Splendor
 {
+	//TODO: Double DPI?
 	class Program
 	{
 		//r = red = axe = wood
@@ -35,51 +37,29 @@ namespace Splendor
 
 		static void Main()
 		{
-			var paths = new List<string>();
+			var pdfDocument = new PdfDocument();
 			var imageCreator = new ImageCreator();
 
 			var newCards = ConvertCardsToNewCards();
 			var cardsGroupedByTier = newCards.GroupBy(newCard => newCard.Tier);
 			foreach (var cardGroup in cardsGroupedByTier)
 			{
-				var cardPdf = PdfCreator.CreatePdfDocument(cardGroup.Select(imageCreator.CreateToolCardFront).ToList(), PageOrientation.Portrait);
-				var cardPath = $"c:\\delete\\Splendor Tier {cardGroup.Key} Tool Fronts.pdf";
-				cardPdf.Save(cardPath);
-				paths.Add(cardPath);
-				var cardBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreateToolCardBack(cardGroup.Key)).ToList(), PageOrientation.Portrait);
-				var cardBackPath = $"c:\\delete\\Splendor Tier {cardGroup.Key} Tool Backs.pdf";
-				cardBackPdf.Save(cardBackPath);
-				paths.Add(cardBackPath);
+				PdfCreator.AddPagesToPdf(pdfDocument, cardGroup.Select(imageCreator.CreateToolCardFront).ToList(), PageOrientation.Portrait);
+				PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreateToolCardBack(cardGroup.Key)).ToList(), PageOrientation.Portrait);
 			}
 
-			var playerAidFrontPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidFront()).ToList(), PageOrientation.Landscape);
-			var playerAidFrontPath = "c:\\delete\\Player Aid Front.pdf";
-			playerAidFrontPdf.Save(playerAidFrontPath);
-			paths.Add(playerAidFrontPath);
+			PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidFront()).ToList(), PageOrientation.Landscape);
 
-			var playerAidBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidBack()).ToList(), PageOrientation.Landscape);
-			var playerAidBackPath = "c:\\delete\\Player Aid Back.pdf";
-			playerAidBackPdf.Save(playerAidBackPath);
-			paths.Add(playerAidBackPath);
+			PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidBack()).ToList(), PageOrientation.Landscape);
 
 			var questFrontImages = QuestFactory.CreateQuests().Select(quest => imageCreator.CreateQuestFront(quest)).Concat(new[] { imageCreator.CreateQuestAidFront() }).ToList();
-			var questsFrontPdf = PdfCreator.CreatePdfDocument(questFrontImages, PageOrientation.Portrait);
-			var questsFrontPath = "c:\\delete\\Quests Front.pdf";
-			questsFrontPdf.Save(questsFrontPath);
-			paths.Add(questsFrontPath);
+			PdfCreator.AddPagesToPdf(pdfDocument, questFrontImages, PageOrientation.Portrait);
 
-			var questsBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreateQuestBack()).ToList(), PageOrientation.Portrait);
-			var questsBackPath = "c:\\delete\\Quests Back.pdf";
-			questsBackPdf.Save(questsBackPath);
-			paths.Add(questsBackPath);
+			PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreateQuestBack()).ToList(), PageOrientation.Portrait);
 
-			Console.Write("Open PDFs (Y/N)?");
-			var response = Console.ReadKey();
-			if (response.Key != ConsoleKey.Y)
-				return;
-
-			foreach (var path in paths)
-				Process.Start(path);
+			var path = "c:\\delete\\Splendor Cards.pdf";
+			pdfDocument.Save(path);
+			//Process.Start(path);
 		}
 
 		private static IList<NewCard> ConvertCardsToNewCards()
