@@ -30,9 +30,10 @@ namespace Splendor
 			var bitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, Color.BurlyWood);
-			var fontFamily = new FontFamily("Tempus Sans ITC");
-			graphics.DrawString(quest.Name, new Font(fontFamily, 11, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF(15, 15, cardShortSideInPixels - 30, 45), new StringFormat { Alignment = StringAlignment.Center});
-			graphics.DrawString(quest.Description, new Font(fontFamily, 9), new SolidBrush(Color.Black), new RectangleF(15, 30, cardShortSideInPixels - 30, 60), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center});
+			var questNameFontFamily = new FontFamily("Tempus Sans ITC");
+			graphics.DrawString(quest.Name, new Font(questNameFontFamily, 11, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF(15, 15, cardShortSideInPixels - 30, 45), new StringFormat { Alignment = StringAlignment.Center});
+			var questDescriptionFontFamily = new FontFamily("Calibri");
+			graphics.DrawString(quest.Description, new Font(questDescriptionFontFamily, 10), new SolidBrush(Color.Black), new RectangleF(10, 30, cardShortSideInPixels - 20, 60), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center});
 			PrintScaledJpg(graphics, quest.Image, 15, 130, cardShortSideInPixels - 30, cardLongSideInPixels - (130 + 15));
 			PrintCostsForQuest(graphics, quest);
 			PrintPointsForQuest(graphics, quest);
@@ -42,7 +43,7 @@ namespace Splendor
 		private static void PrintCostsForQuest(Graphics graphics, Quest quest)
 		{
 			for (var toolIndex = 0; toolIndex < quest.ToolRequirements.Count; toolIndex++)
-				PrintImageWithText(graphics, $"{quest.ToolRequirements[toolIndex]} BW", 15 + toolIndex * (40 + 5), 80, 40, quest.ToolCountRequired.ToString(), 5, 5);
+				PrintImageWithText(graphics, $"{quest.ToolRequirements[toolIndex]} BW", 15 + 10 + toolIndex * (40 + 5 + 10), 87, 40, quest.ToolCountRequired.ToString(), -15, 0);
 		}
 
 		private static void PrintPointsForQuest(Graphics graphics, Quest quest)
@@ -64,7 +65,7 @@ namespace Splendor
 			graphics.DrawString(questAidTitle, titleFont, brush, titleRectangle, new StringFormat {Alignment = StringAlignment.Center});
 
 			var textRectangle = new RectangleF(15, 35, cardShortSideInPixels - 30, cardLongSideInPixels - 50);
-			var textFont = new Font(new FontFamily("Tempus Sans ITC"), 10);
+			var textFont = new Font(new FontFamily("Calibri"), 10);
 
 			var questAidString = "After completing your action each day, check if you have the tools depicted on each quest." +
 				"\r\n\r\nIf you do, equip your villagers with those tools and they will complete the quest for you. Take the quest card and place in front of you." +
@@ -83,12 +84,12 @@ namespace Splendor
 			var graphics = Graphics.FromImage(bitmap);
 			PrintCardBorder(graphics, null, cardLongSideInPixels, cardShortSideInPixels, Color.BurlyWood);
 			var playerAidString = "Each day, you may take one of the following actions:" +
-				"\r\n\u2022  Gather Resources: gather 3 different resources" +
-				"\r\n\u2022  Seek Resources: gather 2 of the same resource [as long as there is an abundance (4+)]" +
-				"\r\n\u2022  Find Blueprint: Take a Tool from the display into your hand and take one (1) gold [if available]" +
+				"\r\n\u2022  Scavenge for Resources: gather 3 different resources" +
+				"\r\n\u2022  Hunt for Resources: gather 2 of the same resource [as long as there is an abundance (4+)]" +
+				"\r\n\u2022  Find Blueprint: Reserve a Tool from the display into your hand and take 1 gold [if available]" +
 				"\r\n\u2022  Craft: Take a Tool from the display, place in front of you and return the depicted resources to the supply" +
 				"\r\n\r\nAfter your action, check if you have the tools to complete any quests.";
-			graphics.DrawString(playerAidString, new Font(new FontFamily("Tempus Sans ITC"), 10), new SolidBrush(Color.Black), new RectangleF(15, 15, cardLongSideInPixels - 20, cardShortSideInPixels - 15), new StringFormat());
+			graphics.DrawString(playerAidString, new Font(new FontFamily("Calibri"), 10), new SolidBrush(Color.Black), new RectangleF(15, 15, cardLongSideInPixels - 20, cardShortSideInPixels - 15), new StringFormat());
 			PrintLimitsReminder(graphics);
 			return bitmap;
 		}
@@ -105,20 +106,22 @@ namespace Splendor
 			var imageSize = 40;
 			var columnPadding = 150;
 			var rowPadding = 25;
-			PrintImageMapping(graphics, "Axe BW", "Axe", "Wood", "Wood", firstX, firstY, imageSize);
-			PrintImageMapping(graphics, "Sword BW", "Sword", "Dragonbone", "Dragonbone", firstX + columnPadding, firstY, imageSize);
-			PrintImageMapping(graphics, "Staff BW", "Staff", "Magic", "Magic Shards",firstX, firstY + imageSize + rowPadding, imageSize);
-			PrintImageMapping(graphics, "Pick BW", "Pick", "Iron", "Iron Ore", firstX + columnPadding, firstY + imageSize + rowPadding, imageSize);
-			PrintImageMapping(graphics, "Chisel BW", "Chisel", "Stone", "Stone", firstX + (columnPadding / 2), firstY + (imageSize + rowPadding) * 2, imageSize);
+			PrintImageMappingPng(graphics, "Axe BW", "Axe", "Wood", "Wood", firstX, firstY, imageSize);
+			PrintImageMappingPng(graphics, "Sword BW", "Sword", "Dragonbone", "Dragonbone", firstX + columnPadding, firstY, imageSize);
+			PrintImageMappingPng(graphics, "Staff BW", "Staff", "Magic", "Magic Shards", firstX, firstY + imageSize + rowPadding, imageSize);
+			PrintImageMappingPng(graphics, "Pick BW", "Pick", "Iron", "Iron Ore", firstX + columnPadding, firstY + imageSize + rowPadding, imageSize);
+			PrintImageMappingPng(graphics, "Chisel BW", "Chisel", "Stone", "Stone", firstX, firstY + (imageSize + rowPadding) * 2, imageSize);
+			using (var goldImage = Image.FromFile($"Images\\Gold.png"))
+				PrintImageMapping(graphics, CreateToolCardBack(3), "Reserve", goldImage, "Gold (wild)", firstX + columnPadding, firstY + (imageSize + rowPadding) * 2, imageSize);
 
 			return bitmap;
 		}
 
 		private static void PrintLimitsReminder(Graphics graphics)
 		{
-			var handLimitString = "Hand limit: 3";
-			var resourceLimitString = "Resource limit: 10";
-			var font = new Font(new FontFamily("Tempus Sans ITC"), 9);
+			var handLimitString = "Hand limit - 3";
+			var resourceLimitString = "Resource limit - 10";
+			var font = new Font(new FontFamily("Calibri"), 9);
 			var solidBrush = new SolidBrush(Color.Black);
 			graphics.DrawString(
 				handLimitString,
@@ -140,12 +143,21 @@ namespace Splendor
 				});
 		}
 
-		private void PrintImageMapping(Graphics graphics, string filename1, string label1, string filename2, string label2, int x, int y, int imageSize)
+		private void PrintImageMappingPng(Graphics graphics, string filename1, string label1, string filename2, string label2, int x, int y, int imageSize)
+		{
+			using (var image1 = Image.FromFile($"Images\\{filename1}.png"))
+			using (var image2 = Image.FromFile($"Images\\{filename2}.png"))
+			{
+				PrintImageMapping(graphics, image1, label1, image2, label2, x, y, imageSize);
+			}
+		}
+
+		private void PrintImageMapping(Graphics graphics, Image image1, string label1, Image image2, string label2, int x, int y, int imageSize)
 		{
 			var arrowSide = 10;
 			var arrowPadding = 5;
 			var labelPadding = 0;
-			var font = new Font(new FontFamily("Tempus Sans ITC"), 9);
+			var font = new Font(new FontFamily("Calibri"), 9);
 			var brush = new SolidBrush(Color.Black);
 			var label1Rectangle = new RectangleF(x - 30, y + imageSize + labelPadding, imageSize + 60, 20);
 			var label2Rectangle = new RectangleF(x + imageSize + arrowPadding + arrowSide + arrowPadding - 30, y + imageSize + labelPadding, imageSize + 60, 20);
@@ -154,12 +166,13 @@ namespace Splendor
 				Alignment = StringAlignment.Center
 			};
 
-			PrintScaledPng(graphics, filename1, x, y, imageSize, imageSize);
+			PrintScaledImage(graphics, image1, x, y, imageSize, imageSize);
 			graphics.DrawString(label1, font, brush, label1Rectangle, stringFormat);
 			PrintScaledPng(graphics, "arrow", x + imageSize + arrowPadding, y + (imageSize / 2), arrowSide, arrowSide);
-			PrintScaledPng(graphics, filename2, x + imageSize + arrowPadding + arrowSide + arrowPadding, y, imageSize, imageSize);
+			PrintScaledImage(graphics, image2, x + imageSize + arrowPadding + arrowSide + arrowPadding, y, imageSize, imageSize);
 			graphics.DrawString(label2, font, brush, label2Rectangle, stringFormat);
 		}
+
 
 		public Image CreateToolCardBack(int tier)
 		{
@@ -329,9 +342,10 @@ namespace Splendor
 		private static void PrintImageWithText(Graphics graphics, string fileName, int imageX, int imageY, int imageSide, string text, int textImageXOffset, int textImageYOffset)
 		{
 			PrintScaledPng(graphics, fileName, imageX, imageY, imageSide, imageSide);
+			var textX = imageX + textImageXOffset;
+			var textY = imageY + textImageYOffset;
 			var path = new GraphicsPath();
-			path.AddString(text, new FontFamily("Arial"), 0, cardCostSize,
-				new PointF(imageX + textImageXOffset, imageY + textImageYOffset), new StringFormat());
+			path.AddString(text, new FontFamily("Calibri"), 0, cardCostSize, new PointF(textX, textY), new StringFormat());
 			graphics.FillPath(Brushes.White, path);
 			graphics.DrawPath(new Pen(Color.Black, .5f), path);
 		}
@@ -343,35 +357,35 @@ namespace Splendor
 
 		private static void PrintPoints(Graphics graphics, int points, int x, int y)
 		{
-			var fontFamily = new FontFamily("Tempus Sans ITC");
-			var font = new Font(fontFamily, 25);
-			var brush = new SolidBrush(Color.Black);
 			PrintScaledPng(graphics, "Wreath", x, y, 65, 50);
-			graphics.DrawString(points.ToString(), font, brush, new RectangleF(x, y, 65, 50), new StringFormat
-			{
-				Alignment = StringAlignment.Center
-			});
+			var path = new GraphicsPath();
+			path.AddString(points.ToString(), new FontFamily("Calibri"), 0, cardCostSize, new RectangleF(x, y, 65, 50), new StringFormat {Alignment = StringAlignment.Center});
+			graphics.FillPath(Brushes.White, path);
+			graphics.DrawPath(new Pen(Color.Black, .5f), path);
 		}
 
 		private static void PrintScaledPng(Graphics graphics, string fileName, int x, int y, int width, int height)
 		{
-			PrintScaledImage(graphics, $"{fileName}.png", x, y, width, height);
+			using (var srcImage = Image.FromFile($"Images\\{fileName}.png"))
+			{
+				PrintScaledImage(graphics, srcImage, x, y, width, height);
+			}
 		}
 
 		private static void PrintScaledJpg(Graphics graphics, string fileName, int x, int y, int width, int height)
 		{
-			PrintScaledImage(graphics, $"{fileName}.jpg", x, y, width, height);
+			using (var srcImage = Image.FromFile($"Images\\{fileName}.jpg"))
+			{
+				PrintScaledImage(graphics, srcImage, x, y, width, height);
+			}
 		}
 
-		private static void PrintScaledImage(Graphics graphics, string fileName, int x, int y, int width, int height)
+		private static void PrintScaledImage(Graphics graphics, Image image, int x, int y, int width, int height)
 		{
-			using (var srcImage = Image.FromFile($"Images\\{fileName}"))
-			{
-				graphics.SmoothingMode = SmoothingMode.AntiAlias;
-				graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-				graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-				graphics.DrawImage(srcImage, new Rectangle(x, y, width, height));
-			}
+			graphics.SmoothingMode = SmoothingMode.AntiAlias;
+			graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+			graphics.DrawImage(image, new Rectangle(x, y, width, height));
 		}
 	}
 }

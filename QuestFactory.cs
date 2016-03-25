@@ -36,7 +36,7 @@ namespace Splendor
 				new Quest
 				{
 					Name = "Clear Ground for City",
-					Description = "We need a new city but there are pesky trees and mountains in the way. Clear the way and we can start building!",
+					Description = "We need a new city but there are pesky trees and mountains in the way. Clear the way so can start building!",
 					ToolRequirements = new[] {"Axe", "Chisel"},
 					Image = "Trees and Rocks"
 				},
@@ -49,22 +49,22 @@ namespace Splendor
 				},
 				new Quest
 				{
-					Name = "Summon Iron Golem Laborers", // TODO: Word like laborers",
+					Name = "Summon Iron Golem Servants",
 					Description = "We've lost far too many villagers in the mines. Summon Iron Golems to work in the mines in their stead.",
 					ToolRequirements = new [] {"Staff", "Pick"},
 					Image = "Iron Golem"
 				},
 				new Quest
 				{
-					Name = "Gathering Expedition", // TODO: Better word than gathering (scavenging? resource-something?)",
-					Description = "Winter is coming! Gather resources that will be needed while the roads are snowed in.",
+					Name = "Prepare for Winter",
+					Description = "Winter is coming! Gather resources that will be needed while the passes are snowed in.",
 					ToolRequirements = new [] {"Axe", "Chisel", "Pick"},
 					Image = "snowy outside 1"
 				},
 				new Quest
 				{
 					Name = "Magical Gathering",
-					Description = "The king's mages are tired from summoning crystals. Go out and find rich veins so they can recover.",
+					Description = "The king's mages are tired from summoning crystals. Go out and find rich magic veins so they can recover.",
 					ToolRequirements = new [] {"Staff", "Chisel", "Pick"},
 					Image = "Glowing Ore"
 				},

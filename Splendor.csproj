@@ -106,6 +106,9 @@
     <Content Include="Images\Glowing Ore.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\Gold.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\Iron Golem.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

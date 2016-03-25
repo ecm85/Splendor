@@ -7,12 +7,6 @@ using PdfSharp;
 
 namespace Splendor
 {
-	//TODO: Backpack w/ 10 slots?
-
-	//TODO: General font formatting on all places, outlines or not, placement next to pictures, etc
-	//TODO: Center points in wreath
-	//TODO: Tweak formatting on player aid side 1 - add bold, more splash/color somehow, etc
-
 	class Program
 	{
 		//r = red = axe = wood
@@ -68,7 +62,7 @@ namespace Splendor
 			playerAidBackPdf.Save(playerAidBackPath);
 			paths.Add(playerAidBackPath);
 
-			var questFrontImages = QuestFactory.CreateQuests().Select(quest => imageCreator.CreateQuestFront(quest)).Concat(new [] {imageCreator.CreateQuestAidFront()}).ToList();
+			var questFrontImages = QuestFactory.CreateQuests().Select(quest => imageCreator.CreateQuestFront(quest)).Concat(new[] { imageCreator.CreateQuestAidFront() }).ToList();
 			var questsFrontPdf = PdfCreator.CreatePdfDocument(questFrontImages, PageOrientation.Portrait);
 			var questsFrontPath = "c:\\delete\\Quests Front.pdf";
 			questsFrontPdf.Save(questsFrontPath);
