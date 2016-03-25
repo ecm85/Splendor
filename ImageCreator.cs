@@ -13,6 +13,18 @@ namespace Splendor
 		private const int cardLongSideInPixels = 336;
 		private const int cardCostSize = 30;
 
+		public Image CreateQuestBack()
+		{
+			var cardBackBitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var graphics = Graphics.FromImage(cardBackBitmap);
+
+			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, Color.BurlyWood);
+			DrawIconPentagon(graphics);
+			PrintCardBackString(graphics, "Quest", 40);
+			PrintGameTitle(graphics);
+			return cardBackBitmap;
+		}
+
 		public Image CreateQuestFront(Quest quest)
 		{
 			var bitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
@@ -180,10 +192,14 @@ namespace Splendor
 
 		private void PrintTier(Graphics graphics, int tier)
 		{
-			var tierString = new string(Enumerable.Repeat('I', tier).ToArray());
+			PrintCardBackString(graphics, new string(Enumerable.Repeat('I', tier).ToArray()), 60);
+		}
+
+		private static void PrintCardBackString(Graphics graphics, string text, int textSize)
+		{
 			graphics.DrawString(
-				tierString,
-				new Font(new FontFamily("Cambria"), 60),
+				text,
+				new Font(new FontFamily("Cambria"), textSize, FontStyle.Bold),
 				new SolidBrush(Color.Black),
 				new RectangleF(8, 13, cardShortSideInPixels - 13, cardLongSideInPixels - 13),
 				new StringFormat

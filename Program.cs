@@ -7,7 +7,6 @@ using PdfSharp;
 
 namespace Splendor
 {
-	//TODO: Quest backs
 	//TODO: Quest aid - message about quests
 	//TODO: Backpack w/ 10 slots?
 	//TODO: Add points to quest cards
@@ -72,9 +71,14 @@ namespace Splendor
 			paths.Add(playerAidBackPath);
 
 			var questsFrontPdf = PdfCreator.CreatePdfDocument(QuestFactory.CreateQuests().Select(quest => imageCreator.CreateQuestFront(quest)).ToList(), PageOrientation.Portrait);
-			var questsFrontPath = "c:\\delete\\quests.pdf";
+			var questsFrontPath = "c:\\delete\\questsFront.pdf";
 			questsFrontPdf.Save(questsFrontPath);
 			paths.Add(questsFrontPath);
+
+			var questsBackPdf = PdfCreator.CreatePdfDocument(Enumerable.Range(0, 9).Select(index => imageCreator.CreateQuestBack()).ToList(), PageOrientation.Portrait);
+			var questsBackPath = "c:\\delete\\questsBack.pdf";
+			questsBackPdf.Save(questsBackPath);
+			paths.Add(questsBackPath);
 
 			Console.Write("Open PDFs (Y/N)?");
 			var response = Console.ReadKey();
