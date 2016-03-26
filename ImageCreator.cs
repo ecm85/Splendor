@@ -167,8 +167,8 @@ namespace Splendor
 			PrintLimitsReminder(graphics);
 
 			var columnWidth = resourceKeyImageSize * 2 + arrowImageSize + 2 * ArrowPadding;
-			var columnPadding = 3 * (cardLongSideInPixels - 2*columnWidth)/7;
-			var columnOffset = 2 * (cardLongSideInPixels - 2*columnWidth)/7;
+			var columnPadding = (cardLongSideInPixels - 2*columnWidth)/3;
+			var columnOffset = (cardLongSideInPixels - 2*columnWidth)/3;
 			var firstColumnX = columnOffset;
 			var secondColumnX = columnOffset + columnWidth + columnPadding;
 			var rowWidth = resourceKeyImageSize;
@@ -180,7 +180,7 @@ namespace Splendor
 
 			PrintImageMappingPng(graphics, "Axe BW", "Axe", "Wood", "Wood", firstColumnX, firstRowY, resourceKeyImageSize);
 			PrintImageMappingPng(graphics, "Sword BW", "Sword", "Dragonbone", "Dragonbone", secondColumnX, firstRowY, resourceKeyImageSize);
-			PrintImageMappingPng(graphics, "Staff BW", "Staff", "Magic", "Magic Shards", firstColumnX, secondRowY, resourceKeyImageSize);
+			PrintImageMappingPng(graphics, "Staff BW", "Staff", "Magic", "Magic  Shards", firstColumnX, secondRowY, resourceKeyImageSize);
 			PrintImageMappingPng(graphics, "Pick BW", "Pick", "Iron", "Iron Ore", secondColumnX, secondRowY, resourceKeyImageSize);
 			PrintImageMappingPng(graphics, "Chisel BW", "Chisel", "Stone", "Stone", firstColumnX, thirdRowY, resourceKeyImageSize);
 			using (var goldImage = Image.FromFile("Images\\Gold.png"))
@@ -193,7 +193,7 @@ namespace Splendor
 		{
 			var handLimitString = "Hand limit - 3";
 			var resourceLimitString = "Resource limit - 10";
-			var limitsReminderFont = new Font(bodyFontFamily, smallBodyFontSize, GraphicsUnit.Pixel);
+			var limitsReminderFont = new Font(bodyFontFamily, bodyFontSize, GraphicsUnit.Pixel);
 			var textRectangle = new RectangleF(
 				borderPadding,
 				cardShortSideInPixels - (limitsReminderFont.Height + borderPadding),
@@ -214,17 +214,16 @@ namespace Splendor
 
 		private void PrintImageMapping(Graphics graphics, Image image1, string label1, Image image2, string label2, int x, int y, int imageSize)
 		{
-			var arrowPadding = ArrowPadding;
-			var font = new Font(bodyFontFamily, 9);
-			var brush = new SolidBrush(Color.Black);
-			var label1Rectangle = new RectangleF(x - 30, y + imageSize, imageSize + 60, 20);
-			var label2Rectangle = new RectangleF(x + imageSize + arrowPadding + arrowImageSize + arrowPadding - 30, y + imageSize, imageSize + 60, 20);
+			var imageMappingFont = new Font(bodyFontFamily, smallBodyFontSize, GraphicsUnit.Pixel);
+			var mappingTextWidth = imageSize + 2 * (arrowImageSize + 2 * ArrowPadding);
+			var label1Rectangle = new RectangleF(x - (arrowImageSize + 2 * ArrowPadding), y + imageSize, mappingTextWidth, imageMappingFont.Height);
+			var label2Rectangle = new RectangleF(x + imageSize + 2 * ArrowPadding + arrowImageSize - (arrowImageSize + 2 * ArrowPadding), y + imageSize, mappingTextWidth, imageMappingFont.Height);
 
 			PrintScaledImage(graphics, image1, x, y, imageSize, imageSize);
-			graphics.DrawString(label1, font, brush, label1Rectangle, horizontalCenterAlignment);
-			PrintScaledPng(graphics, "arrow", x + imageSize + arrowPadding, y + (imageSize / 2), arrowImageSize, arrowImageSize);
-			PrintScaledImage(graphics, image2, x + imageSize + arrowPadding + arrowImageSize + arrowPadding, y, imageSize, imageSize);
-			graphics.DrawString(label2, font, brush, label2Rectangle, horizontalCenterAlignment);
+			graphics.DrawString(label1, imageMappingFont, blackBrush, label1Rectangle, horizontalCenterAlignment);
+			PrintScaledPng(graphics, "arrow", x + imageSize + ArrowPadding, y + (imageSize / 2), arrowImageSize, arrowImageSize);
+			PrintScaledImage(graphics, image2, x + imageSize + ArrowPadding + arrowImageSize + ArrowPadding, y, imageSize, imageSize);
+			graphics.DrawString(label2, imageMappingFont, blackBrush, label2Rectangle, horizontalCenterAlignment);
 		}
 
 		public Image CreateToolCardBack(int tier)
