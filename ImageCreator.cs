@@ -29,9 +29,13 @@ namespace Splendor
 		private readonly StringFormat horizontalNearAlignment = new StringFormat {Alignment = StringAlignment.Near};
 		private readonly StringFormat horizontalFarAlignment = new StringFormat {Alignment = StringAlignment.Far};
 		private readonly SolidBrush blackBrush = new SolidBrush(Color.Black);
+
+		private const int questCostImageSize = 40;
+		private const int wreathImageWidth = 55;
+		private const int wreathImageHeight = 50;
 		private const int questFrontHeaderFontSize = 14;
-		private const int questDescriptionFontSize = 12;
-		private const int questImageHeight = 130;
+		private const int questBodyFontSize = 12;
+		private const int questImageY = 130;
 
 		public Image CreateQuestBack()
 		{
@@ -51,37 +55,49 @@ namespace Splendor
 			var graphics = Graphics.FromImage(bitmap);
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
 			var headerFont = new Font(headerFontFamily, questFrontHeaderFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
+			var headerHeight = headerFont.Height;
 			graphics.DrawString(
 				quest.Name,
 				headerFont,
 				blackBrush,
-				new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 2 * borderPadding, headerFont.Height),
+				new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 2 * borderPadding, headerHeight),
 				horizontalCenterAlignment);
-			var questDescriptionFont = new Font(bodyFontFamily, questDescriptionFontSize, GraphicsUnit.Pixel);
+			var questDescriptionFont = new Font(bodyFontFamily, questBodyFontSize, GraphicsUnit.Pixel);
+			var questDescriptionHeight = questDescriptionFont.Height * 3;
 			graphics.DrawString(quest.Description,
 				questDescriptionFont,
 				blackBrush,
 				new RectangleF(
 					borderPadding,
-					headerFont.Height + borderPadding,
+					headerHeight + borderPadding,
 					cardShortSideInPixels - 2 * borderPadding,
-					questDescriptionFont.Height * 3),
+					questDescriptionHeight),
 				horizontalCenterAlignment);
-			PrintScaledJpg(graphics, quest.Image, borderPadding, questImageHeight, cardShortSideInPixels - 2 * borderPadding, cardLongSideInPixels - (questImageHeight + borderPadding));
-			PrintCostsForQuest(graphics, quest);
-			PrintPointsForQuest(graphics, quest);
+			PrintCostsForQuest(graphics, quest, borderPadding, borderPadding + headerHeight + questDescriptionHeight);
+			PrintPointsForQuest(graphics, quest, cardShortSideInPixels - (borderPadding + wreathImageWidth), borderPadding + headerHeight + questDescriptionHeight);
+			PrintScaledJpg(graphics, quest.Image, borderPadding, questImageY, cardShortSideInPixels - 2 * borderPadding, cardLongSideInPixels - (questImageY + borderPadding));
 			return bitmap;
 		}
 
-		private void PrintCostsForQuest(Graphics graphics, Quest quest)
+		private void PrintCostsForQuest(Graphics graphics, Quest quest, int initialX, int initialY)
 		{
 			for (var toolIndex = 0; toolIndex < quest.ToolRequirements.Count; toolIndex++)
-				PrintImageWithText(graphics, $"{quest.ToolRequirements[toolIndex]} BW", borderPadding + 10 + toolIndex * (40 + 5 + 10), 87, 40, quest.ToolCountRequired.ToString(), -15, 0);
+			{
+				PrintImageWithText(
+					graphics,
+					$"{quest.ToolRequirements[toolIndex]} BW",
+					initialX + (questCostImageSize / 4) + toolIndex * (questCostImageSize + (questCostImageSize / 8) + questCostImageSize / 4),
+					initialY,
+					questCostImageSize,
+					quest.ToolCountRequired.ToString(),
+					(int)-(questCostImageSize / 2.6f),
+					0);
+			}
 		}
 
-		private void PrintPointsForQuest(Graphics graphics, Quest quest)
+		private void PrintPointsForQuest(Graphics graphics, Quest quest, int initialX, int initialY)
 		{
-			PrintPoints(graphics, quest.Points, cardShortSideInPixels - 70, 80);
+			PrintPoints(graphics, quest.Points, initialX, initialY);
 		}
 
 		public Image CreateQuestAidFront()
@@ -92,12 +108,20 @@ namespace Splendor
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
 
 			var questAidTitle = "Completing Quests";
-			var titleRectangle = new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 30, cardLongSideInPixels - 30);
-			var titleFont = new Font(headerFontFamily, 12, FontStyle.Bold);
+			var titleRectangle = new RectangleF(
+				borderPadding,
+				borderPadding,
+				cardShortSideInPixels - 2 * borderPadding,
+				cardLongSideInPixels - 2 * borderPadding);
+			var titleFont = new Font(headerFontFamily, questFrontHeaderFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
 			graphics.DrawString(questAidTitle, titleFont, blackBrush, titleRectangle, horizontalCenterAlignment);
 
-			var textRectangle = new RectangleF(borderPadding, borderPadding + 20, cardShortSideInPixels - 30, cardLongSideInPixels - 50);
-			var textFont = new Font(bodyFontFamily, 10);
+			var textRectangle = new RectangleF(
+				borderPadding,
+				borderPadding + titleFont.Height,
+				cardShortSideInPixels - 2 * borderPadding,
+				cardLongSideInPixels - (2 * borderPadding + titleFont.Height));
+			var textFont = new Font(bodyFontFamily, questBodyFontSize, GraphicsUnit.Pixel);
 
 			var questAidString = "After completing your action each day, check if you have the tools depicted on each quest." +
 				"\r\n\r\nIf you do, equip your villagers with those tools and they will complete the quest for you. Take the quest card and place in front of you." +
@@ -363,14 +387,14 @@ namespace Splendor
 
 		private void PrintPointsForTool(Graphics graphics, NewCard newCard)
 		{
-			PrintPoints(graphics, newCard.Points, cardShortSideInPixels - 68, cardLongSideInPixels - 65);
+			PrintPoints(graphics, newCard.Points, cardShortSideInPixels - (borderPadding + wreathImageWidth), cardLongSideInPixels - (borderPadding + wreathImageHeight));
 		}
 
 		private void PrintPoints(Graphics graphics, int points, int x, int y)
 		{
-			PrintScaledPng(graphics, "Wreath", x, y, 65, 50);
+			PrintScaledPng(graphics, "Wreath", x, y, wreathImageWidth, wreathImageHeight);
 			var path = new GraphicsPath();
-			path.AddString(points.ToString(), bodyFontFamily, 0, 30, new RectangleF(x, y, 65, 50), horizontalCenterAlignment);
+			path.AddString(points.ToString(), bodyFontFamily, 0, 30, new RectangleF(x, y, wreathImageWidth, wreathImageHeight), horizontalCenterAlignment);
 			graphics.FillPath(Brushes.White, path);
 			graphics.DrawPath(new Pen(Color.Black, .5f), path);
 		}
