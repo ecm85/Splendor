@@ -28,12 +28,20 @@ namespace Splendor
 		private readonly StringFormat horizontalFarAlignment = new StringFormat {Alignment = StringAlignment.Far};
 		private readonly SolidBrush blackBrush = new SolidBrush(Color.Black);
 
-		private const int bodyFontSize = 12;
+		private const float textOutlineWidth = .5f;
+
+		private const int borderThickness = 5;
+		private const int borderRadius = 10;
+		private const int borderPadding = 12;
+
 		private const int smallBodyFontSize = 11;
+		private const int bodyFontSize = 12;
 		private const int headerFontSize = 14;
+		private const int largeHeaderFontSize = 20;
+		private const int imageLabelFontSize = 30;
+		private const int gameTitleFontSize = 42;
 		private const int questBackFontSize = 50;
 		private const int tierTextFontSize = 85;
-		private const int gameTitleFontSize = 42;
 
 		private const int resourceKeyImageSize = 40;
 		private const int arrowImageSize = 10;
@@ -41,7 +49,7 @@ namespace Splendor
 		private const int wreathImageWidth = 55;
 		private const int wreathImageHeight = 50;
 		private const int questImageY = 130;
-		private const int borderPadding = 12;
+		private const int cardFrontSmallImageSize = 50;
 
 		private static int ArrowPadding => arrowImageSize / 2;
 
@@ -183,7 +191,7 @@ namespace Splendor
 
 			PrintImageMappingPng(graphics, "Axe BW", "Axe", "Wood", "Wood", firstColumnX, firstRowY, resourceKeyImageSize);
 			PrintImageMappingPng(graphics, "Sword BW", "Sword", "Dragonbone", "Dragonbone", secondColumnX, firstRowY, resourceKeyImageSize);
-			PrintImageMappingPng(graphics, "Staff BW", "Staff", "Magic", "Magic  Shards", firstColumnX, secondRowY, resourceKeyImageSize);
+			PrintImageMappingPng(graphics, "Staff BW", "Staff", "Magic", "Magic Shards", firstColumnX, secondRowY, resourceKeyImageSize);
 			PrintImageMappingPng(graphics, "Pick BW", "Pick", "Iron", "Iron Ore", secondColumnX, secondRowY, resourceKeyImageSize);
 			PrintImageMappingPng(graphics, "Chisel BW", "Chisel", "Stone", "Stone", firstColumnX, thirdRowY, resourceKeyImageSize);
 			using (var goldImage = Image.FromFile("Images\\Gold.png"))
@@ -196,7 +204,7 @@ namespace Splendor
 		{
 			var handLimitString = "Hand limit - 3";
 			var resourceLimitString = "Resource limit - 10";
-			var limitsReminderFont = new Font(bodyFontFamily, bodyFontSize, GraphicsUnit.Pixel);
+			var limitsReminderFont = new Font(bodyFontFamily, smallBodyFontSize, GraphicsUnit.Pixel);
 			var textRectangle = new RectangleF(
 				borderPadding,
 				cardShortSideInPixels - (limitsReminderFont.Height + borderPadding),
@@ -217,7 +225,7 @@ namespace Splendor
 
 		private void PrintImageMapping(Graphics graphics, Image image1, string label1, Image image2, string label2, int x, int y, int imageSize)
 		{
-			var imageMappingFont = new Font(bodyFontFamily, smallBodyFontSize, GraphicsUnit.Pixel);
+			var imageMappingFont = new Font(bodyFontFamily, bodyFontSize, GraphicsUnit.Pixel);
 			var mappingTextWidth = imageSize + 2 * (arrowImageSize + 2 * ArrowPadding);
 			var label1Rectangle = new RectangleF(x - (arrowImageSize + 2 * ArrowPadding), y + imageSize, mappingTextWidth, imageMappingFont.Height);
 			var label2Rectangle = new RectangleF(x + imageSize + 2 * ArrowPadding + arrowImageSize - (arrowImageSize + 2 * ArrowPadding), y + imageSize, mappingTextWidth, imageMappingFont.Height);
@@ -322,10 +330,11 @@ namespace Splendor
 			var cardBitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(cardBitmap);
 			PrintCardBorder(graphics, newCard.Color, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
-			PrintCardName(newCard, cardShortSideInPixels, graphics);
+			var cardNameFont = new Font(headerFontFamily, largeHeaderFontSize, GraphicsUnit.Pixel);
+			PrintCardName(newCard, graphics, cardNameFont);
 			PrintToolImage(newCard, graphics);
-			PrintResourceProduced(newCard, graphics);
-			PrintToolIcon(newCard, graphics);
+			PrintResourceProduced(newCard, graphics, cardShortSideInPixels - (borderPadding + cardFrontSmallImageSize), borderPadding + 2 * cardNameFont.Height);
+			PrintToolIcon(newCard, graphics, borderPadding, borderPadding + 2 * cardNameFont.Height);
 			PrintCostsForTool(newCard, graphics);
 			if (newCard.Points > 0)
 				PrintPointsForTool(graphics, newCard);
@@ -334,73 +343,119 @@ namespace Splendor
 
 		private void PrintCardBorder(Graphics graphics, Color? middleBorderColor, int topSideInPixels, int leftSideInPixels, Color backgroundColor)
 		{
-			graphics.FillRoundedRectangle(new SolidBrush(Color.Black), 0, 0, topSideInPixels - 1, leftSideInPixels - 1, 10);
+			graphics.FillRoundedRectangle(
+				new SolidBrush(Color.Black),
+				0,
+				0,
+				topSideInPixels,
+				leftSideInPixels,
+				borderRadius);
 			if (middleBorderColor.HasValue)
-				graphics.FillRoundedRectangle(new SolidBrush(middleBorderColor.Value), 5, 5, topSideInPixels - 11, leftSideInPixels - 11, 10);
-			graphics.FillRoundedRectangle(new SolidBrush(backgroundColor), 10, 10, topSideInPixels-21, leftSideInPixels-21, 10);
+				graphics.FillRoundedRectangle(
+					new SolidBrush(middleBorderColor.Value),
+					borderThickness,
+					borderThickness,
+					topSideInPixels - 2 * borderThickness,
+					leftSideInPixels - 2 * borderThickness,
+					borderRadius);
+			graphics.FillRoundedRectangle(
+				new SolidBrush(backgroundColor),
+				2 * borderThickness,
+				2 * borderThickness,
+				topSideInPixels-(4 * borderThickness),
+				leftSideInPixels-(4 * borderThickness),
+				borderRadius);
 		}
 
-		private void PrintCardName(NewCard newCard, int cardWidth, Graphics graphics)
+		private void PrintCardName(NewCard newCard, Graphics graphics, Font cardNameFont)
 		{
-			var fontFamily = headerFontFamily;
-			const int fontSize = 14;
-			var font = new Font(fontFamily, fontSize);
-			var brush = new SolidBrush(Color.Black);
-			const int fontLineHeight = 25;
-			var topRectangle = new RectangleF(0, borderPadding, cardWidth, fontLineHeight);
-			var bottomRectangle = new RectangleF(0, fontLineHeight + borderPadding, cardWidth, fontLineHeight);
+			var topRectangle = new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 2 * borderPadding, cardNameFont.Height);
+			var bottomRectangle = new RectangleF(borderPadding, borderPadding + cardNameFont.Height, cardShortSideInPixels - 2 * borderPadding, cardNameFont.Height);
 			var nameParts = newCard.Name.Split(' ');
 			var firstNamePart = nameParts.Take(nameParts.Length - 2).ToList();
 			var lastNamePart = nameParts.Skip(firstNamePart.Count).ToList();
-			graphics.DrawString(string.Join(" ", firstNamePart), font, brush, topRectangle, fullCenterAlignment);
-			graphics.DrawString(string.Join(" ", lastNamePart), font, brush, bottomRectangle, fullCenterAlignment);
+			graphics.DrawString(string.Join(" ", firstNamePart), cardNameFont, blackBrush, topRectangle, fullCenterAlignment);
+			graphics.DrawString(string.Join(" ", lastNamePart), cardNameFont, blackBrush, bottomRectangle, fullCenterAlignment);
 		}
 
-		private static void PrintToolImage(NewCard newCard, Graphics graphics)
+		private void PrintToolImage(NewCard newCard, Graphics graphics)
 		{
-			PrintScaledPng(graphics, newCard.Tool, 65, 130, cardShortSideInPixels - 130, cardShortSideInPixels - 130);
+			const int cardFrontLargeImageSize = cardShortSideInPixels - (2 * borderPadding + 2 * cardFrontSmallImageSize);
+			PrintScaledPng(
+				graphics,
+				newCard.Tool,
+				(cardShortSideInPixels / 2) - (cardFrontLargeImageSize / 2),
+				(cardLongSideInPixels / 2) - (cardFrontLargeImageSize / 2),
+				cardFrontLargeImageSize,
+				cardFrontLargeImageSize);
 		}
 
-		private static void PrintResourceProduced(NewCard newCard, Graphics graphics)
+		private void PrintResourceProduced(NewCard newCard, Graphics graphics, int x, int y)
 		{
-			PrintImageWithText(graphics, newCard.ResourceProduced, cardShortSideInPixels - 65, 65, 50, "+", -1, 20);
+			PrintImageWithText(graphics, newCard.ResourceProduced, x, y, cardFrontSmallImageSize, "+", 0, (int)(cardFrontSmallImageSize * (2.0/5)));
 		}
 
-		private void PrintToolIcon(NewCard newCard, Graphics graphics)
+		private void PrintToolIcon(NewCard newCard, Graphics graphics, int x, int y)
 		{
-			PrintScaledPng(graphics, $"{newCard.Tool} BW", borderPadding, borderPadding + 50, 50, 50);
+			PrintScaledPng(graphics, $"{newCard.Tool} BW", x, y, cardFrontSmallImageSize, cardFrontSmallImageSize);
 		}
 
-		private static void PrintCostsForTool(NewCard newCard, Graphics graphics)
+		private void PrintCostsForTool(NewCard newCard, Graphics graphics)
 		{
 			var costList = newCard.Costs.ToList();
 			for (var costIndex = 0; costIndex < costList.Count; costIndex++)
-				PrintImageWithText(graphics, costList[costIndex].Key, 12, cardLongSideInPixels - (costIndex*50) - 70, 50, costList[costIndex].Value.ToString(), -1, 20);
+				PrintImageWithText(
+					graphics,
+					costList[costIndex].Key,
+					borderPadding,
+					cardLongSideInPixels - ((costIndex + 1)*cardFrontSmallImageSize + borderPadding),
+					cardFrontSmallImageSize,
+					costList[costIndex].Value.ToString(),
+					0,
+					(int)(cardFrontSmallImageSize * (2.0/5)));
 		}
 
-		private static void PrintImageWithText(Graphics graphics, string fileName, int imageX, int imageY, int imageSide, string text, int textImageXOffset, int textImageYOffset)
+		private void PrintImageWithText(Graphics graphics, string fileName, int imageX, int imageY, int imageSide, string text, int textImageXOffset, int textImageYOffset)
 		{
 			PrintScaledPng(graphics, fileName, imageX, imageY, imageSide, imageSide);
 			var textX = imageX + textImageXOffset;
 			var textY = imageY + textImageYOffset;
+			var font = new Font(bodyFontFamily, imageLabelFontSize);
 			var path = new GraphicsPath();
-			path.AddString(text, bodyFontFamily, 0, 30, new PointF(textX, textY), new StringFormat());
+			path.AddString(
+				text,
+				font.FontFamily,
+				(int)font.Style,
+				font.Size,
+				new PointF(textX, textY),
+				new StringFormat());
 			graphics.FillPath(Brushes.White, path);
-			graphics.DrawPath(new Pen(Color.Black, .5f), path);
+			graphics.DrawPath(new Pen(Color.Black, textOutlineWidth), path);
 		}
 
 		private void PrintPointsForTool(Graphics graphics, NewCard newCard)
 		{
-			PrintPoints(graphics, newCard.Points, cardShortSideInPixels - (borderPadding + wreathImageWidth), cardLongSideInPixels - (borderPadding + wreathImageHeight));
+			PrintPoints(
+				graphics,
+				newCard.Points,
+				cardShortSideInPixels - (borderPadding + wreathImageWidth),
+				cardLongSideInPixels - (borderPadding + wreathImageHeight));
 		}
 
 		private void PrintPoints(Graphics graphics, int points, int x, int y)
 		{
 			PrintScaledPng(graphics, "Wreath", x, y, wreathImageWidth, wreathImageHeight);
 			var path = new GraphicsPath();
-			path.AddString(points.ToString(), bodyFontFamily, 0, 30, new RectangleF(x, y, wreathImageWidth, wreathImageHeight), horizontalCenterAlignment);
+			var font = new Font(bodyFontFamily, imageLabelFontSize);
+			path.AddString(
+				points.ToString(),
+				font.FontFamily,
+				(int)font.Style,
+				font.Size,
+				new RectangleF(x, y, wreathImageWidth, wreathImageHeight),
+				horizontalCenterAlignment);
 			graphics.FillPath(Brushes.White, path);
-			graphics.DrawPath(new Pen(Color.Black, .5f), path);
+			graphics.DrawPath(new Pen(Color.Black, textOutlineWidth), path);
 		}
 
 		private static void PrintScaledPng(Graphics graphics, string fileName, int x, int y, int width, int height)
