@@ -36,7 +36,7 @@ namespace Splendor
 				new Quest
 				{
 					Name = "Clear Ground for City",
-					Description = "We need a new city but there are pesky trees and mountains in the way. Clear the way so can start building!",
+					Description = "We need a new city but there are pesky trees and mountains in the way. Clear the way!",
 					ToolRequirements = new[] {"Axe", "Chisel"},
 					Image = "Trees and Rocks"
 				},
