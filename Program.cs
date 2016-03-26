@@ -8,8 +8,6 @@ using PdfSharp.Pdf;
 
 namespace Splendor
 {
-	//TODO: Double DPI?
-	//TODO: Trim pdf by a bit
 	class Program
 	{
 		//r = red = axe = wood
