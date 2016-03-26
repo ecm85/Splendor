@@ -28,16 +28,19 @@ namespace Splendor
 		private readonly StringFormat horizontalFarAlignment = new StringFormat {Alignment = StringAlignment.Far};
 		private readonly SolidBrush blackBrush = new SolidBrush(Color.Black);
 
+		private const int bodyFontSize = 12;
+		private const int smallBodyFontSize = 11;
+		private const int headerFontSize = 14;
+		private const int questBackFontSize = 50;
+		private const int tierTextFontSize = 85;
+		private const int gameTitleFontSize = 42;
+
 		private const int resourceKeyImageSize = 40;
 		private const int arrowImageSize = 10;
 		private const int questCostImageSize = 40;
 		private const int wreathImageWidth = 55;
 		private const int wreathImageHeight = 50;
-		private const int questFrontHeaderFontSize = 14;
-		private const int bodyFontSize = 12;
-		private const int smallBodyFontSize = 11;
 		private const int questImageY = 130;
-		private const int questBackTextSize = 40;
 		private const int borderPadding = 12;
 
 		private static int ArrowPadding => arrowImageSize / 2;
@@ -49,7 +52,7 @@ namespace Splendor
 
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
 			DrawIconPentagon(graphics);
-			PrintCardBackString(graphics, questBackText, questBackTextSize);
+			PrintCardBackString(graphics, questBackText, questBackFontSize);
 			PrintGameTitle(graphics);
 			return cardBackBitmap;
 		}
@@ -59,7 +62,7 @@ namespace Splendor
 			var bitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
-			var headerFont = new Font(headerFontFamily, questFrontHeaderFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
+			var headerFont = new Font(headerFontFamily, headerFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
 			var headerHeight = headerFont.Height;
 			graphics.DrawString(
 				quest.Name,
@@ -118,7 +121,7 @@ namespace Splendor
 				borderPadding,
 				cardShortSideInPixels - 2 * borderPadding,
 				cardLongSideInPixels - 2 * borderPadding);
-			var titleFont = new Font(headerFontFamily, questFrontHeaderFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
+			var titleFont = new Font(headerFontFamily, headerFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
 			graphics.DrawString(questAidTitle, titleFont, blackBrush, titleRectangle, horizontalCenterAlignment);
 
 			var textRectangle = new RectangleF(
@@ -284,34 +287,33 @@ namespace Splendor
 
 		private void PrintTier(Graphics graphics, int tier)
 		{
-			PrintCardBackString(graphics, new string(Enumerable.Repeat('I', tier).ToArray()), 60);
+			PrintCardBackString(graphics, new string(Enumerable.Repeat('I', tier).ToArray()), tierTextFontSize);
 		}
 
 		private void PrintCardBackString(Graphics graphics, string text, int textSize)
 		{
 			graphics.DrawString(
 				text,
-				new Font(cardBackFontFamily, textSize, FontStyle.Bold),
+				new Font(cardBackFontFamily, textSize, FontStyle.Bold, GraphicsUnit.Pixel),
 				new SolidBrush(Color.Black),
-				new RectangleF(8, 13, cardShortSideInPixels - 13, cardLongSideInPixels - 13),
+				new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 2 * borderPadding, cardLongSideInPixels - 2 * borderPadding),
 				fullCenterAlignment);
 		}
 
 		private void PrintGameTitle(Graphics graphics)
 		{
-			var font = new Font(cardBackFontFamily, 35);
-			var brush = new SolidBrush(Color.Black);
+			var titleFont = new Font(cardBackFontFamily, gameTitleFontSize, GraphicsUnit.Pixel);
 			graphics.DrawString(
 				"Splendor",
-				font,
-				brush,
-				new RectangleF(8, 13, cardShortSideInPixels - 8, 100),
+				titleFont,
+				blackBrush,
+				new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 2 * borderPadding, titleFont.Height),
 				horizontalCenterAlignment);
 			graphics.DrawString(
 				"Forge",
-				font,
-				brush,
-				new RectangleF(8, cardLongSideInPixels - 83, cardShortSideInPixels - 8, 100),
+				titleFont,
+				blackBrush,
+				new RectangleF(borderPadding, cardLongSideInPixels - (borderPadding + titleFont.Height), cardShortSideInPixels - 2 * borderPadding, titleFont.Height),
 				horizontalCenterAlignment);
 		}
 
