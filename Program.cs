@@ -41,20 +41,29 @@ namespace Splendor
 			var cardsGroupedByTier = newCards.GroupBy(newCard => newCard.Tier);
 			foreach (var cardGroup in cardsGroupedByTier)
 			{
-				PdfCreator.AddPagesToPdf(pdfDocument, cardGroup.Select(imageCreator.CreateToolCardFront).ToList(), PageOrientation.Portrait);
-				var cardBackCount = cardGroup.Count() %9 == 0 ? cardGroup.Count() : cardGroup.Count()/9*9 + 9;
-				PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, cardBackCount).Select(index => imageCreator.CreateToolCardBack(cardGroup.Key)).ToList(), PageOrientation.Portrait);
+				var remainingCards = cardGroup.ToList();
+				while (remainingCards.Any())
+				{
+					var imagesToUse = remainingCards.Take(9);
+					PdfCreator.AddPageToPdf(pdfDocument, imagesToUse.Select(imageCreator.CreateToolCardFront).ToList(), PageOrientation.Portrait);
+					PdfCreator.AddPageToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreateToolCardBack(cardGroup.Key)).ToList(), PageOrientation.Portrait);
+					remainingCards = remainingCards.Skip(9).ToList();
+				}
 			}
 
-			PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidFront()).ToList(), PageOrientation.Landscape);
+			PdfCreator.AddPageToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidFront()).ToList(), PageOrientation.Landscape);
 
-			PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidBack()).ToList(), PageOrientation.Landscape);
+			PdfCreator.AddPageToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidBack()).ToList(), PageOrientation.Landscape);
 
 			var questFrontImages = QuestFactory.CreateQuests().Select(quest => imageCreator.CreateQuestFront(quest)).Concat(new[] { imageCreator.CreateQuestAidFront() }).ToList();
-			PdfCreator.AddPagesToPdf(pdfDocument, questFrontImages, PageOrientation.Portrait);
-
-			var questBackCount = questFrontImages.Count%9 == 0 ? questFrontImages.Count : questFrontImages.Count()/9*9 + 9;
-			PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, questBackCount).Select(index => imageCreator.CreateQuestBack()).ToList(), PageOrientation.Portrait);
+			var remainingQuestImages = questFrontImages.ToList();
+			while (remainingQuestImages.Any())
+				{
+					var imagesToUse = remainingQuestImages.Take(9);
+					PdfCreator.AddPageToPdf(pdfDocument, imagesToUse.ToList(), PageOrientation.Portrait);
+					PdfCreator.AddPageToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreateQuestBack()).ToList(), PageOrientation.Portrait);
+					remainingQuestImages = remainingQuestImages.Skip(9).ToList();
+				}
 
 			var path = "c:\\delete\\Splendor Cards.pdf";
 			pdfDocument.Save(path);
