@@ -15,13 +15,11 @@ namespace Splendor
 		private const int cardShortSideInPixels = (int)(shortSideDpi * cardShortSideInInches);
 		private const int cardLongSideInPixels = (int)(longSideDpi * cardLongSideInInches);
 
-		private const int questBackTextSize = 40;
 		private readonly Color standardCardBackgroundColor = Color.BurlyWood;
 		private const string questBackText = "Quest";
 		private readonly FontFamily headerFontFamily = new FontFamily("Tempus Sans ITC");
 		private static readonly FontFamily bodyFontFamily = new FontFamily("Calibri");
 		private static readonly FontFamily cardBackFontFamily = new FontFamily("Cambria");
-		private const int borderPadding = 12;
 
 		private readonly StringFormat horizontalCenterAlignment = new StringFormat { Alignment = StringAlignment.Center};
 		private readonly StringFormat fullCenterAlignment = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center};
@@ -30,12 +28,18 @@ namespace Splendor
 		private readonly StringFormat horizontalFarAlignment = new StringFormat {Alignment = StringAlignment.Far};
 		private readonly SolidBrush blackBrush = new SolidBrush(Color.Black);
 
+		private const int resourceKeyImageSize = 40;
+		private const int arrowImageSize = 10;
 		private const int questCostImageSize = 40;
 		private const int wreathImageWidth = 55;
 		private const int wreathImageHeight = 50;
 		private const int questFrontHeaderFontSize = 14;
-		private const int questBodyFontSize = 12;
+		private const int bodyFontSize = 12;
 		private const int questImageY = 130;
+		private const int questBackTextSize = 40;
+		private const int borderPadding = 12;
+
+		private static int ArrowPadding => arrowImageSize / 2;
 
 		public Image CreateQuestBack()
 		{
@@ -62,7 +66,7 @@ namespace Splendor
 				blackBrush,
 				new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 2 * borderPadding, headerHeight),
 				horizontalCenterAlignment);
-			var questDescriptionFont = new Font(bodyFontFamily, questBodyFontSize, GraphicsUnit.Pixel);
+			var questDescriptionFont = new Font(bodyFontFamily, bodyFontSize, GraphicsUnit.Pixel);
 			var questDescriptionHeight = questDescriptionFont.Height * 3;
 			graphics.DrawString(quest.Description,
 				questDescriptionFont,
@@ -121,7 +125,7 @@ namespace Splendor
 				borderPadding + titleFont.Height,
 				cardShortSideInPixels - 2 * borderPadding,
 				cardLongSideInPixels - (2 * borderPadding + titleFont.Height));
-			var textFont = new Font(bodyFontFamily, questBodyFontSize, GraphicsUnit.Pixel);
+			var textFont = new Font(bodyFontFamily, bodyFontSize, GraphicsUnit.Pixel);
 
 			var questAidString = "After completing your action each day, check if you have the tools depicted on each quest." +
 				"\r\n\r\nIf you do, equip your villagers with those tools and they will complete the quest for you. Take the quest card and place in front of you." +
@@ -147,9 +151,9 @@ namespace Splendor
 				"\r\n\r\nAfter your action, check if you have the tools to complete any quests.";
 			graphics.DrawString(
 				playerAidString,
-				new Font(bodyFontFamily, 10),
+				new Font(bodyFontFamily, bodyFontSize, GraphicsUnit.Pixel),
 				blackBrush,
-				new RectangleF(borderPadding, borderPadding, cardLongSideInPixels - borderPadding, cardShortSideInPixels - borderPadding));
+				new RectangleF(borderPadding, borderPadding, cardLongSideInPixels - 2 * borderPadding, cardShortSideInPixels - 2 * borderPadding));
 			PrintLimitsReminder(graphics);
 			return bitmap;
 		}
@@ -161,18 +165,25 @@ namespace Splendor
 			PrintCardBorder(graphics, null, cardLongSideInPixels, cardShortSideInPixels, standardCardBackgroundColor);
 			PrintLimitsReminder(graphics);
 
-			var firstX = 45;
-			var firstY = 15;
-			var imageSize = 40;
-			var columnPadding = 150;
-			var rowPadding = 25;
-			PrintImageMappingPng(graphics, "Axe BW", "Axe", "Wood", "Wood", firstX, firstY, imageSize);
-			PrintImageMappingPng(graphics, "Sword BW", "Sword", "Dragonbone", "Dragonbone", firstX + columnPadding, firstY, imageSize);
-			PrintImageMappingPng(graphics, "Staff BW", "Staff", "Magic", "Magic Shards", firstX, firstY + imageSize + rowPadding, imageSize);
-			PrintImageMappingPng(graphics, "Pick BW", "Pick", "Iron", "Iron Ore", firstX + columnPadding, firstY + imageSize + rowPadding, imageSize);
-			PrintImageMappingPng(graphics, "Chisel BW", "Chisel", "Stone", "Stone", firstX, firstY + (imageSize + rowPadding) * 2, imageSize);
+			var columnWidth = resourceKeyImageSize * 2 + arrowImageSize + 2 * ArrowPadding;
+			var columnPadding = 3 * (cardLongSideInPixels - 2*columnWidth)/7;
+			var columnOffset = 2 * (cardLongSideInPixels - 2*columnWidth)/7;
+			var firstColumnX = columnOffset;
+			var secondColumnX = columnOffset + columnWidth + columnPadding;
+			var rowWidth = resourceKeyImageSize;
+			var rowPadding = (cardShortSideInPixels - 3*rowWidth)/5;
+			var rowOffset = rowPadding;
+			var firstRowY = rowOffset;
+			var secondRowY = rowOffset + rowWidth + rowPadding;
+			var thirdRowY = rowOffset + 2*(rowWidth + rowPadding);
+
+			PrintImageMappingPng(graphics, "Axe BW", "Axe", "Wood", "Wood", firstColumnX, firstRowY, resourceKeyImageSize);
+			PrintImageMappingPng(graphics, "Sword BW", "Sword", "Dragonbone", "Dragonbone", secondColumnX, firstRowY, resourceKeyImageSize);
+			PrintImageMappingPng(graphics, "Staff BW", "Staff", "Magic", "Magic Shards", firstColumnX, secondRowY, resourceKeyImageSize);
+			PrintImageMappingPng(graphics, "Pick BW", "Pick", "Iron", "Iron Ore", secondColumnX, secondRowY, resourceKeyImageSize);
+			PrintImageMappingPng(graphics, "Chisel BW", "Chisel", "Stone", "Stone", firstColumnX, thirdRowY, resourceKeyImageSize);
 			using (var goldImage = Image.FromFile("Images\\Gold.png"))
-				PrintImageMapping(graphics, CreateToolCardBack(3), "Reserve", goldImage, "Gold (wild)", firstX + columnPadding, firstY + (imageSize + rowPadding) * 2, imageSize);
+				PrintImageMapping(graphics, CreateToolCardBack(3), "Reserve", goldImage, "Gold (wild)", secondColumnX, thirdRowY, resourceKeyImageSize);
 
 			return bitmap;
 		}
@@ -207,21 +218,18 @@ namespace Splendor
 
 		private void PrintImageMapping(Graphics graphics, Image image1, string label1, Image image2, string label2, int x, int y, int imageSize)
 		{
-			var arrowSide = 10;
-			var arrowPadding = 5;
-			var labelPadding = 0;
+			var arrowPadding = ArrowPadding;
 			var font = new Font(bodyFontFamily, 9);
 			var brush = new SolidBrush(Color.Black);
-			var label1Rectangle = new RectangleF(x - 30, y + imageSize + labelPadding, imageSize + 60, 20);
-			var label2Rectangle = new RectangleF(x + imageSize + arrowPadding + arrowSide + arrowPadding - 30, y + imageSize + labelPadding, imageSize + 60, 20);
+			var label1Rectangle = new RectangleF(x - 30, y + imageSize, imageSize + 60, 20);
+			var label2Rectangle = new RectangleF(x + imageSize + arrowPadding + arrowImageSize + arrowPadding - 30, y + imageSize, imageSize + 60, 20);
 
 			PrintScaledImage(graphics, image1, x, y, imageSize, imageSize);
 			graphics.DrawString(label1, font, brush, label1Rectangle, horizontalCenterAlignment);
-			PrintScaledPng(graphics, "arrow", x + imageSize + arrowPadding, y + (imageSize / 2), arrowSide, arrowSide);
-			PrintScaledImage(graphics, image2, x + imageSize + arrowPadding + arrowSide + arrowPadding, y, imageSize, imageSize);
+			PrintScaledPng(graphics, "arrow", x + imageSize + arrowPadding, y + (imageSize / 2), arrowImageSize, arrowImageSize);
+			PrintScaledImage(graphics, image2, x + imageSize + arrowPadding + arrowImageSize + arrowPadding, y, imageSize, imageSize);
 			graphics.DrawString(label2, font, brush, label2Rectangle, horizontalCenterAlignment);
 		}
-
 
 		public Image CreateToolCardBack(int tier)
 		{
