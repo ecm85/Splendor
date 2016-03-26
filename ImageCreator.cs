@@ -36,8 +36,8 @@ namespace Splendor
 		private const int borderThickness = 5 * dpiFactor;
 		private const int borderPadding = 14 * dpiFactor;
 		private const int smallBodyFontSize = 11 * dpiFactor;
-		private const int bodyFontSize = 12 * dpiFactor;
-		private const int headerFontSize = 14 * dpiFactor;
+		private const int bodyFontSize = 13 * dpiFactor;
+		private const int headerFontSize = 16 * dpiFactor;
 		private const int largeHeaderFontSize = 20 * dpiFactor;
 		private const int imageLabelFontSize = 30 * dpiFactor;
 		private const int gameTitleFontSize = 42 * dpiFactor;
