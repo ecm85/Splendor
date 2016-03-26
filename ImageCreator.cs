@@ -35,6 +35,7 @@ namespace Splendor
 		private const int wreathImageHeight = 50;
 		private const int questFrontHeaderFontSize = 14;
 		private const int bodyFontSize = 12;
+		private const int smallBodyFontSize = 11;
 		private const int questImageY = 130;
 		private const int questBackTextSize = 40;
 		private const int borderPadding = 12;
@@ -192,19 +193,14 @@ namespace Splendor
 		{
 			var handLimitString = "Hand limit - 3";
 			var resourceLimitString = "Resource limit - 10";
-			var font = new Font(bodyFontFamily, 9);
-			graphics.DrawString(
-				handLimitString,
-				font,
-				blackBrush,
-				new RectangleF(borderPadding, cardShortSideInPixels - (15 + borderPadding), cardLongSideInPixels - (15 + borderPadding), 50),
-				horizontalNearAlignment);
-			graphics.DrawString(
-				resourceLimitString,
-				font,
-				blackBrush,
-				new RectangleF(borderPadding, cardShortSideInPixels - (15 + borderPadding), cardLongSideInPixels - (15 + borderPadding), 50),
-				horizontalFarAlignment);
+			var limitsReminderFont = new Font(bodyFontFamily, smallBodyFontSize, GraphicsUnit.Pixel);
+			var textRectangle = new RectangleF(
+				borderPadding,
+				cardShortSideInPixels - (limitsReminderFont.Height + borderPadding),
+				cardLongSideInPixels - (2 * borderPadding),
+				limitsReminderFont.Height + borderPadding);
+			graphics.DrawString(handLimitString, limitsReminderFont, blackBrush, textRectangle, horizontalNearAlignment);
+			graphics.DrawString(resourceLimitString, limitsReminderFont, blackBrush, textRectangle, horizontalFarAlignment);
 		}
 
 		private void PrintImageMappingPng(Graphics graphics, string filename1, string label1, string filename2, string label2, int x, int y, int imageSize)
