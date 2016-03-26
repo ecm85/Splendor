@@ -24,8 +24,9 @@ namespace Splendor
 				page.Orientation = pageOrientation;
 				var pageWidth = page.Width;
 				var pageHeight = page.Height;
-				var horizontalWhiteSpace = (pageWidth - (3*firstXImage.PointWidth))/4;
-				var verticalWhiteSpace = (pageHeight - (3*firstXImage.PointHeight))/22;
+				const int padding = 7;
+				var horizontalWhiteSpace = (pageWidth - (3*firstXImage.PointWidth))/(padding * 2 + 2);
+				var verticalWhiteSpace = (pageHeight - (3*firstXImage.PointHeight))/(padding * 2 + 2);
 				var xGraphics = XGraphics.FromPdfPage(page);
 
 				for (var index = 0; index < 9 && index < nextNine.Count; index++)
@@ -35,8 +36,8 @@ namespace Splendor
 					var row = index % 3;
 					var column = index / 3;
 
-					var x = (row * (xImage.PointWidth + horizontalWhiteSpace)) + horizontalWhiteSpace;
-					var y = (column * (xImage.PointHeight + verticalWhiteSpace)) + 10 * verticalWhiteSpace;
+					var x = (row * (xImage.PointWidth + horizontalWhiteSpace)) + padding * horizontalWhiteSpace;
+					var y = (column * (xImage.PointHeight + verticalWhiteSpace)) + padding * verticalWhiteSpace;
 
 					xGraphics.DrawImage(xImage, x, y);
 				}
