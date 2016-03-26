@@ -255,19 +255,18 @@ namespace Splendor
 
 		private void DrawIconPentagon(Graphics graphics)
 		{
-			var radius = 85;
+			var radius = (cardShortSideInPixels*(7.0/10))/1.902;
 
-			var x = 119;
-			var y = 170;
+			var x = cardShortSideInPixels / 2;
+			var y = cardLongSideInPixels / 2;
 			var c1 = (int)(Math.Cos(2*Math.PI/5) * radius);
 			var c2 = (int)(Math.Cos(Math.PI/5) * radius);
 			var s1 = (int)(Math.Sin(2*Math.PI/5) * radius);
 			var s2 = (int)(Math.Sin(4*Math.PI/5) * radius);
 
-
 			var points = new[]
 			{
-				new Point(cardShortSideInPixels - x, cardLongSideInPixels - (y + radius)),
+				new Point(cardShortSideInPixels - x, (int)(cardLongSideInPixels - (y + radius))),
 				new Point(cardShortSideInPixels - (x + s1), cardLongSideInPixels - (y + c1)),
 				new Point(cardShortSideInPixels - (x + s2), cardLongSideInPixels - (y + -c2)),
 				new Point(cardShortSideInPixels - (x + -s2), cardLongSideInPixels - (y + -c2)),
