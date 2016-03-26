@@ -30,11 +30,11 @@ namespace Splendor
 		private readonly StringFormat horizontalFarAlignment = new StringFormat {Alignment = StringAlignment.Far};
 		private readonly SolidBrush blackBrush = new SolidBrush(Color.Black);
 
-		private const int borderRadius = 10;
+		private const int borderRadius = 50;
 
 		private const float textOutlineWidth = .5f * dpiFactor;
 		private const int borderThickness = 5 * dpiFactor;
-		private const int borderPadding = 12 * dpiFactor;
+		private const int borderPadding = 14 * dpiFactor;
 		private const int smallBodyFontSize = 11 * dpiFactor;
 		private const int bodyFontSize = 12 * dpiFactor;
 		private const int headerFontSize = 14 * dpiFactor;
@@ -49,8 +49,8 @@ namespace Splendor
 		private const int pentagonImageSize = 30 * dpiFactor;
 		private const int wreathImageWidth = 55 * dpiFactor;
 		private const int wreathImageHeight = 50 * dpiFactor;
-		private const int questImageY = 130 * dpiFactor;
 		private const int cardFrontSmallImageSize = 50 * dpiFactor;
+		private const int questImageYBottomPadding = 10 * dpiFactor;
 
 		private static int ArrowPadding => arrowImageSize / 2;
 
@@ -92,7 +92,8 @@ namespace Splendor
 				horizontalCenterAlignment);
 			PrintCostsForQuest(graphics, quest, borderPadding, borderPadding + headerHeight + questDescriptionHeight);
 			PrintPointsForQuest(graphics, quest, cardShortSideInPixels - (borderPadding + wreathImageWidth), borderPadding + headerHeight + questDescriptionHeight);
-			PrintScaledJpg(graphics, quest.Image, borderPadding, questImageY, cardShortSideInPixels - 2 * borderPadding, cardLongSideInPixels - (questImageY + borderPadding));
+			var questImageY = borderPadding + headerHeight + questDescriptionHeight + cardFrontSmallImageSize;
+			PrintScaledJpg(graphics, quest.Image, borderPadding, questImageY, cardShortSideInPixels - 2 * borderPadding, cardLongSideInPixels - (questImageY + borderPadding + questImageYBottomPadding));
 			return bitmap;
 		}
 
