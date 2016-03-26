@@ -50,7 +50,7 @@ namespace Splendor
 		private const int wreathImageWidth = 55 * dpiFactor;
 		private const int wreathImageHeight = 50 * dpiFactor;
 		private const int cardFrontSmallImageSize = 50 * dpiFactor;
-		private const int questImageYBottomPadding = 10 * dpiFactor;
+		private const int questImageYBottomPadding = 7 * dpiFactor;
 
 		private static int ArrowPadding => arrowImageSize / 2;
 
