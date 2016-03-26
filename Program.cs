@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PdfSharp;
@@ -44,7 +42,8 @@ namespace Splendor
 			foreach (var cardGroup in cardsGroupedByTier)
 			{
 				PdfCreator.AddPagesToPdf(pdfDocument, cardGroup.Select(imageCreator.CreateToolCardFront).ToList(), PageOrientation.Portrait);
-				PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreateToolCardBack(cardGroup.Key)).ToList(), PageOrientation.Portrait);
+				var cardBackCount = cardGroup.Count() %9 == 0 ? cardGroup.Count() : cardGroup.Count()/9*9 + 9;
+				PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, cardBackCount).Select(index => imageCreator.CreateToolCardBack(cardGroup.Key)).ToList(), PageOrientation.Portrait);
 			}
 
 			PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreatePlayerAidFront()).ToList(), PageOrientation.Landscape);
@@ -54,11 +53,11 @@ namespace Splendor
 			var questFrontImages = QuestFactory.CreateQuests().Select(quest => imageCreator.CreateQuestFront(quest)).Concat(new[] { imageCreator.CreateQuestAidFront() }).ToList();
 			PdfCreator.AddPagesToPdf(pdfDocument, questFrontImages, PageOrientation.Portrait);
 
-			PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, 9).Select(index => imageCreator.CreateQuestBack()).ToList(), PageOrientation.Portrait);
+			var questBackCount = questFrontImages.Count%9 == 0 ? questFrontImages.Count : questFrontImages.Count()/9*9 + 9;
+			PdfCreator.AddPagesToPdf(pdfDocument, Enumerable.Range(0, questBackCount).Select(index => imageCreator.CreateQuestBack()).ToList(), PageOrientation.Portrait);
 
 			var path = "c:\\delete\\Splendor Cards.pdf";
 			pdfDocument.Save(path);
-			//Process.Start(path);
 		}
 
 		private static IList<NewCard> ConvertCardsToNewCards()
