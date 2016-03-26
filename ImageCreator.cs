@@ -7,13 +7,15 @@ namespace Splendor
 {
 	public class ImageCreator
 	{
+		const int dpiFactor = 3;
+
 		private const float cardShortSideInInches = 2.5f;
 		private const float cardLongSideInInches = 3.5f;
+
 		//card: 2.5x3.5 = 240 * 336
-		private const int shortSideDpi = 96;
-		private const int longSideDpi = 96;
-		private const int cardShortSideInPixels = (int)(shortSideDpi * cardShortSideInInches);
-		private const int cardLongSideInPixels = (int)(longSideDpi * cardLongSideInInches);
+		private const int dpi = 96 * dpiFactor;
+		private const int cardShortSideInPixels = (int)(dpi * cardShortSideInInches);
+		private const int cardLongSideInPixels = (int)(dpi * cardLongSideInInches);
 
 		private readonly Color standardCardBackgroundColor = Color.BurlyWood;
 		private const string questBackText = "Quest";
@@ -28,34 +30,33 @@ namespace Splendor
 		private readonly StringFormat horizontalFarAlignment = new StringFormat {Alignment = StringAlignment.Far};
 		private readonly SolidBrush blackBrush = new SolidBrush(Color.Black);
 
-		private const float textOutlineWidth = .5f;
-
-		private const int borderThickness = 5;
 		private const int borderRadius = 10;
-		private const int borderPadding = 12;
 
-		private const int smallBodyFontSize = 11;
-		private const int bodyFontSize = 12;
-		private const int headerFontSize = 14;
-		private const int largeHeaderFontSize = 20;
-		private const int imageLabelFontSize = 30;
-		private const int gameTitleFontSize = 42;
-		private const int questBackFontSize = 50;
-		private const int tierTextFontSize = 85;
-
-		private const int resourceKeyImageSize = 40;
-		private const int arrowImageSize = 10;
-		private const int questCostImageSize = 40;
-		private const int wreathImageWidth = 55;
-		private const int wreathImageHeight = 50;
-		private const int questImageY = 130;
-		private const int cardFrontSmallImageSize = 50;
+		private const float textOutlineWidth = .5f * dpiFactor;
+		private const int borderThickness = 5 * dpiFactor;
+		private const int borderPadding = 12 * dpiFactor;
+		private const int smallBodyFontSize = 11 * dpiFactor;
+		private const int bodyFontSize = 12 * dpiFactor;
+		private const int headerFontSize = 14 * dpiFactor;
+		private const int largeHeaderFontSize = 20 * dpiFactor;
+		private const int imageLabelFontSize = 30 * dpiFactor;
+		private const int gameTitleFontSize = 42 * dpiFactor;
+		private const int questBackFontSize = 50 * dpiFactor;
+		private const int tierTextFontSize = 85 * dpiFactor;
+		private const int resourceKeyImageSize = 40 * dpiFactor;
+		private const int arrowImageSize = 10 * dpiFactor;
+		private const int questCostImageSize = 40 * dpiFactor;
+		private const int pentagonImageSize = 30 * dpiFactor;
+		private const int wreathImageWidth = 55 * dpiFactor;
+		private const int wreathImageHeight = 50 * dpiFactor;
+		private const int questImageY = 130 * dpiFactor;
+		private const int cardFrontSmallImageSize = 50 * dpiFactor;
 
 		private static int ArrowPadding => arrowImageSize / 2;
 
 		public Image CreateQuestBack()
 		{
-			var cardBackBitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var cardBackBitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(cardBackBitmap);
 
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
@@ -67,7 +68,7 @@ namespace Splendor
 
 		public Image CreateQuestFront(Quest quest)
 		{
-			var bitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var bitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
 			var headerFont = new Font(headerFontFamily, headerFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
@@ -118,7 +119,7 @@ namespace Splendor
 
 		public Image CreateQuestAidFront()
 		{
-			var bitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var bitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
 
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
@@ -152,7 +153,7 @@ namespace Splendor
 
 		public Image CreatePlayerAidFront()
 		{
-			var bitmap = new Bitmap(cardLongSideInPixels, cardShortSideInPixels);
+			var bitmap = CreateBitmap(cardLongSideInPixels, cardShortSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
 			PrintCardBorder(graphics, null, cardLongSideInPixels, cardShortSideInPixels, standardCardBackgroundColor);
 			var playerAidString = "Each day, you may take one of the following actions:" +
@@ -172,7 +173,7 @@ namespace Splendor
 
 		public Image CreatePlayerAidBack()
 		{
-			var bitmap = new Bitmap(cardLongSideInPixels, cardShortSideInPixels);
+			var bitmap = CreateBitmap(cardLongSideInPixels, cardShortSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
 			PrintCardBorder(graphics, null, cardLongSideInPixels, cardShortSideInPixels, standardCardBackgroundColor);
 			PrintLimitsReminder(graphics);
@@ -239,7 +240,7 @@ namespace Splendor
 
 		public Image CreateToolCardBack(int tier)
 		{
-			var cardBackBitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var cardBackBitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(cardBackBitmap);
 
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, GetTierBackColor(tier));
@@ -284,13 +285,12 @@ namespace Splendor
 				new Point(cardShortSideInPixels - (x + -s1), cardLongSideInPixels - (y + c1))
 			};
 
-			var cardSide = 30;
-			var halfCardSide = cardSide / 2;
-			PrintScaledPng(graphics, "Axe BW", points[0].X - halfCardSide, points[0].Y - halfCardSide, cardSide, cardSide);
-			PrintScaledPng(graphics, "Sword BW", points[1].X - halfCardSide, points[1].Y - halfCardSide, cardSide, cardSide);
-			PrintScaledPng(graphics, "Staff BW", points[2].X - halfCardSide, points[2].Y - halfCardSide, cardSide, cardSide);
-			PrintScaledPng(graphics, "Pick BW", points[3].X - halfCardSide, points[3].Y - halfCardSide, cardSide, cardSide);
-			PrintScaledPng(graphics, "Chisel BW", points[4].X - halfCardSide, points[4].Y - halfCardSide, cardSide, cardSide);
+			var halfPentagonImageSize = pentagonImageSize / 2;
+			PrintScaledPng(graphics, "Axe BW", points[0].X - halfPentagonImageSize, points[0].Y - halfPentagonImageSize, pentagonImageSize, pentagonImageSize);
+			PrintScaledPng(graphics, "Sword BW", points[1].X - halfPentagonImageSize, points[1].Y - halfPentagonImageSize, pentagonImageSize, pentagonImageSize);
+			PrintScaledPng(graphics, "Staff BW", points[2].X - halfPentagonImageSize, points[2].Y - halfPentagonImageSize, pentagonImageSize, pentagonImageSize);
+			PrintScaledPng(graphics, "Pick BW", points[3].X - halfPentagonImageSize, points[3].Y - halfPentagonImageSize, pentagonImageSize, pentagonImageSize);
+			PrintScaledPng(graphics, "Chisel BW", points[4].X - halfPentagonImageSize, points[4].Y - halfPentagonImageSize, pentagonImageSize, pentagonImageSize);
 		}
 
 		private void PrintTier(Graphics graphics, int tier)
@@ -327,7 +327,7 @@ namespace Splendor
 
 		public Image CreateToolCardFront(NewCard newCard)
 		{
-			var cardBitmap = new Bitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var cardBitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(cardBitmap);
 			PrintCardBorder(graphics, newCard.Color, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
 			var cardNameFont = new Font(headerFontFamily, largeHeaderFontSize, GraphicsUnit.Pixel);
@@ -480,6 +480,13 @@ namespace Splendor
 			graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
 			graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 			graphics.DrawImage(image, new Rectangle(x, y, width, height));
+		}
+
+		private Bitmap CreateBitmap(int width, int height)
+		{
+			var bitmap = new Bitmap(width, height);
+			bitmap.SetResolution(dpi, dpi);
+			return bitmap;
 		}
 	}
 }
