@@ -7,13 +7,13 @@ namespace Splendor
 {
 	public class ImageCreator
 	{
-		const int dpiFactor = 3;
+		const float dpiFactor = 300.0f / 96;
 
 		private const float cardShortSideInInches = 2.5f;
 		private const float cardLongSideInInches = 3.5f;
 
 		//card: 2.5x3.5 = 240 * 336
-		private const int dpi = 96 * dpiFactor;
+		private const int dpi = (int)(96 * dpiFactor);
 		private const int cardShortSideInPixels = (int)(dpi * cardShortSideInInches);
 		private const int cardLongSideInPixels = (int)(dpi * cardLongSideInInches);
 
@@ -33,24 +33,24 @@ namespace Splendor
 		private const int borderRadius = 50;
 
 		private const float textOutlineWidth = .5f * dpiFactor;
-		private const int borderThickness = 5 * dpiFactor;
-		private const int borderPadding = 14 * dpiFactor;
-		private const int smallBodyFontSize = 11 * dpiFactor;
-		private const int bodyFontSize = 13 * dpiFactor;
-		private const int headerFontSize = 16 * dpiFactor;
-		private const int largeHeaderFontSize = 20 * dpiFactor;
-		private const int imageLabelFontSize = 30 * dpiFactor;
-		private const int gameTitleFontSize = 42 * dpiFactor;
-		private const int questBackFontSize = 50 * dpiFactor;
-		private const int tierTextFontSize = 85 * dpiFactor;
-		private const int resourceKeyImageSize = 40 * dpiFactor;
-		private const int arrowImageSize = 10 * dpiFactor;
-		private const int questCostImageSize = 40 * dpiFactor;
-		private const int pentagonImageSize = 30 * dpiFactor;
-		private const int wreathImageWidth = 55 * dpiFactor;
-		private const int wreathImageHeight = 50 * dpiFactor;
-		private const int cardFrontSmallImageSize = 50 * dpiFactor;
-		private const int questImageYBottomPadding = 7 * dpiFactor;
+		private const int borderThickness = (int) (5 * dpiFactor);
+		private const int borderPadding = (int) (14 * dpiFactor);
+		private const int smallBodyFontSize = (int) (11 * dpiFactor);
+		private const int bodyFontSize = (int) (13 * dpiFactor);
+		private const int headerFontSize = (int) (16 * dpiFactor);
+		private const int largeHeaderFontSize = (int) (20 * dpiFactor);
+		private const int imageLabelFontSize = (int) (30 * dpiFactor);
+		private const int gameTitleFontSize = (int) (42 * dpiFactor);
+		private const int questBackFontSize = (int) (50 * dpiFactor);
+		private const int tierTextFontSize = (int) (85 * dpiFactor);
+		private const int resourceKeyImageSize = (int) (40 * dpiFactor);
+		private const int arrowImageSize = (int) (10 * dpiFactor);
+		private const int questCostImageSize = (int) (40 * dpiFactor);
+		private const int pentagonImageSize = (int) (30 * dpiFactor);
+		private const int wreathImageWidth = (int) (55 * dpiFactor);
+		private const int wreathImageHeight = (int) (50 * dpiFactor);
+		private const int cardFrontSmallImageSize = (int) (50 * dpiFactor);
+		private const int questImageYBottomPadding = (int) (7 * dpiFactor);
 
 		private static int ArrowPadding => arrowImageSize / 2;
 
