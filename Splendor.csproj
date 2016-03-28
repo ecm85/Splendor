@@ -55,6 +55,7 @@
     <Compile Include="Card.cs" />
     <Compile Include="GraphicsExtensions.cs" />
     <Compile Include="ImageCreator.cs" />
+    <Compile Include="ImageToSave.cs" />
     <Compile Include="NewCard.cs" />
     <Compile Include="PdfCreator.cs" />
     <Compile Include="Program.cs" />
