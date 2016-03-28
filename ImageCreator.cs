@@ -35,10 +35,10 @@ namespace Splendor
 		private const float textOutlineWidth = .5f * dpiFactor;
 		private const int borderThickness = (int) (5 * dpiFactor);
 		private const int borderPadding = (int) (14 * dpiFactor);
-		private const int smallBodyFontSize = (int) (11 * dpiFactor);
+		private const int limitsFontSize = (int) (11 * dpiFactor);
 		private const int bodyFontSize = (int) (13 * dpiFactor);
-		private const int headerFontSize = (int) (16 * dpiFactor);
-		private const int largeHeaderFontSize = (int) (20 * dpiFactor);
+		private const int questHeaderFontSize = (int) (15 * dpiFactor);
+		private const int toolHeaderFontSize = (int) (20 * dpiFactor);
 		private const int imageLabelFontSize = (int) (30 * dpiFactor);
 		private const int gameTitleFontSize = (int) (42 * dpiFactor);
 		private const int questBackFontSize = (int) (50 * dpiFactor);
@@ -71,7 +71,7 @@ namespace Splendor
 			var bitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(bitmap);
 			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
-			var headerFont = new Font(headerFontFamily, headerFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
+			var headerFont = new Font(headerFontFamily, questHeaderFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
 			var headerHeight = headerFont.Height;
 			graphics.DrawString(
 				quest.Name,
@@ -131,7 +131,7 @@ namespace Splendor
 				borderPadding,
 				cardShortSideInPixels - 2 * borderPadding,
 				cardLongSideInPixels - 2 * borderPadding);
-			var titleFont = new Font(headerFontFamily, headerFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
+			var titleFont = new Font(headerFontFamily, questHeaderFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
 			graphics.DrawString(questAidTitle, titleFont, blackBrush, titleRectangle, horizontalCenterAlignment);
 
 			var textRectangle = new RectangleF(
@@ -206,7 +206,7 @@ namespace Splendor
 		{
 			var handLimitString = "Hand limit - 3";
 			var resourceLimitString = "Resource limit - 10";
-			var limitsReminderFont = new Font(bodyFontFamily, smallBodyFontSize, GraphicsUnit.Pixel);
+			var limitsReminderFont = new Font(bodyFontFamily, limitsFontSize, GraphicsUnit.Pixel);
 			var textRectangle = new RectangleF(
 				borderPadding,
 				cardShortSideInPixels - (limitsReminderFont.Height + borderPadding),
@@ -331,7 +331,7 @@ namespace Splendor
 			var cardBitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
 			var graphics = Graphics.FromImage(cardBitmap);
 			PrintCardBorder(graphics, newCard.Color, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
-			var cardNameFont = new Font(headerFontFamily, largeHeaderFontSize, GraphicsUnit.Pixel);
+			var cardNameFont = new Font(headerFontFamily, toolHeaderFontSize, GraphicsUnit.Pixel);
 			PrintCardName(newCard, graphics, cardNameFont);
 			PrintToolImage(newCard, graphics);
 			PrintResourceProduced(newCard, graphics, cardShortSideInPixels - (borderPadding + cardFrontSmallImageSize), borderPadding + 2 * cardNameFont.Height);

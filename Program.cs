@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using PdfSharp;
-using PdfSharp.Pdf;
 
 namespace Splendor
 {
@@ -13,7 +10,6 @@ namespace Splendor
 		//TODO: Move tool icons/points/resource produced to top of card
 		//TODO: Fix borders (add bleed areas, etc, make line up right with back)
 		//TODO: thicker card stock
-		//TODO: Fix font size (servan)
 		//TODO: Remove setup from quest aid and add message about only 1 per turn.
 		//TODO: Add a full setup player aid card
 		//TODO: Change quest back color?
