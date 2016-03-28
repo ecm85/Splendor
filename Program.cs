@@ -8,6 +8,16 @@ namespace Splendor
 {
 	class Program
 	{
+		//TODO: Change to one image per card
+		//TODO: Move tool icons/points/resource produced to top of card
+		//TODO: Fix borders (add bleed areas, etc, make line up right with back)
+		//TODO: thicker card stock
+		//TODO: Fix font size (servan)
+		//TODO: Remove setup from quest aid and add message about only 1 per turn.
+		//TODO: Add a full setup player aid card
+		//TODO: Change quest back color?
+		//TODO: Make quest aid double-sided? Or put full setup on it
+
 		//r = red = axe = wood
 		//g = green = chisel = stone
 		//k = black = sword = bone
