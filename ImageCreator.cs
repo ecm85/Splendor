@@ -9,13 +9,22 @@ namespace Splendor
 	{
 		const float dpiFactor = 300.0f / 96;
 
+
 		private const float cardShortSideInInches = 2.5f;
 		private const float cardLongSideInInches = 3.5f;
+
+		private const float bleedSizeInInches = .25f;
+
+		private const float cardShortSideInInchesWithBleed = cardShortSideInInches + bleedSizeInInches;
+		private const float cardLongSideInInchesWithBleed = cardLongSideInInches + bleedSizeInInches;
 
 		//card: 2.5x3.5 = 240 * 336
 		private const int dpi = (int)(96 * dpiFactor);
 		private const int cardShortSideInPixels = (int)(dpi * cardShortSideInInches);
 		private const int cardLongSideInPixels = (int)(dpi * cardLongSideInInches);
+
+		private const int cardShortSideInPixelsWithBleed = (int)(dpi * cardShortSideInInchesWithBleed);
+		private const int cardLongSideInPixelsWithBleed = (int)(dpi * cardLongSideInInchesWithBleed);
 
 		private readonly Color standardCardBackgroundColor = Color.BurlyWood;
 		private const string questBackText = "Quest";
@@ -30,35 +39,38 @@ namespace Splendor
 		private readonly StringFormat horizontalFarAlignment = new StringFormat {Alignment = StringAlignment.Far};
 		private readonly SolidBrush blackBrush = new SolidBrush(Color.Black);
 
-		private const int borderRadius = 50;
+		private Point origin = new Point((int) (bleedSizeInInches * dpi / 2), (int) (bleedSizeInInches * dpi / 2));
+
+		private const int borderRadius = 40;
 
 		private const float textOutlineWidth = .5f * dpiFactor;
-		private const int borderThickness = (int) (5 * dpiFactor);
-		private const int borderPadding = (int) (14 * dpiFactor);
-		private const int limitsFontSize = (int) (11 * dpiFactor);
-		private const int bodyFontSize = (int) (13 * dpiFactor);
-		private const int questHeaderFontSize = (int) (15 * dpiFactor);
-		private const int toolHeaderFontSize = (int) (20 * dpiFactor);
-		private const int imageLabelFontSize = (int) (30 * dpiFactor);
-		private const int gameTitleFontSize = (int) (42 * dpiFactor);
-		private const int questBackFontSize = (int) (50 * dpiFactor);
-		private const int tierTextFontSize = (int) (85 * dpiFactor);
-		private const int resourceKeyImageSize = (int) (40 * dpiFactor);
+		private const int borderThickness = (int) (20 * dpiFactor);
+		private const int borderPadding = (int) (25 * dpiFactor);
+		private const int nestedBorderPadding = borderPadding + 25;
+		private const int limitsFontSize = (int) (9 * dpiFactor);
+		private const int bodyFontSize = (int) (10 * dpiFactor);
+		private const int questHeaderFontSize = (int) (12 * dpiFactor);
+		private const int toolHeaderFontSize = (int) (18 * dpiFactor);
+		private const int imageLabelFontSize = (int) (18 * dpiFactor);
+		private const int gameTitleFontSize = (int) (38 * dpiFactor);
+		private const int questBackFontSize = (int) (45 * dpiFactor);
+		private const int tierTextFontSize = (int) (80 * dpiFactor);
+		private const int resourceKeyImageSize = (int) (35 * dpiFactor);
 		private const int arrowImageSize = (int) (10 * dpiFactor);
-		private const int questCostImageSize = (int) (40 * dpiFactor);
-		private const int pentagonImageSize = (int) (30 * dpiFactor);
-		private const int wreathImageWidth = (int) (55 * dpiFactor);
-		private const int cardFrontSmallImageSize = (int) (50 * dpiFactor);
-		private const int questImageYBottomPadding = (int) (7 * dpiFactor);
+		private const int questCostImageSize = (int) (35 * dpiFactor);
+		private const int pentagonImageSize = (int) (25 * dpiFactor);
+		private const int wreathImageWidth = (int) (40 * dpiFactor);
+		private const int cardFrontSmallImageSize = (int) (35 * dpiFactor);
+		private const int questImageYBottomPadding = (int) (5 * dpiFactor);
 
 		private static int ArrowPadding => arrowImageSize / 2;
 
 		public Image CreateQuestBack()
 		{
-			var cardBackBitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var cardBackBitmap = CreateBitmap(ImageOrientation.Portrait);
 			var graphics = Graphics.FromImage(cardBackBitmap);
 
-			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
+			PrintCardBorder(graphics, null, ImageOrientation.Portrait, standardCardBackgroundColor);
 			DrawIconPentagon(graphics);
 			PrintCardBackString(graphics, questBackText, questBackFontSize);
 			PrintGameTitle(graphics);
@@ -67,12 +79,13 @@ namespace Splendor
 
 		public Image CreateQuestFront(Quest quest)
 		{
-			var bitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var bitmap = CreateBitmap(ImageOrientation.Portrait);
 			var graphics = Graphics.FromImage(bitmap);
-			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
+			PrintCardBorder(graphics, null, ImageOrientation.Portrait, standardCardBackgroundColor);
 			var headerFont = new Font(headerFontFamily, questHeaderFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
 			var headerHeight = headerFont.Height;
-			graphics.DrawString(
+			DrawString(
+				graphics,
 				quest.Name,
 				headerFont,
 				blackBrush,
@@ -80,7 +93,9 @@ namespace Splendor
 				horizontalCenterAlignment);
 			var questDescriptionFont = new Font(bodyFontFamily, bodyFontSize, GraphicsUnit.Pixel);
 			var questDescriptionHeight = questDescriptionFont.Height * 3;
-			graphics.DrawString(quest.Description,
+			DrawString(
+				graphics,
+				quest.Description,
 				questDescriptionFont,
 				blackBrush,
 				new RectangleF(
@@ -119,10 +134,10 @@ namespace Splendor
 
 		public Image CreateQuestAidFront()
 		{
-			var bitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var bitmap = CreateBitmap(ImageOrientation.Portrait);
 			var graphics = Graphics.FromImage(bitmap);
 
-			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
+			PrintCardBorder(graphics, null, ImageOrientation.Portrait, standardCardBackgroundColor);
 
 			var questAidTitle = "Completing Quests";
 			var titleRectangle = new RectangleF(
@@ -131,7 +146,7 @@ namespace Splendor
 				cardShortSideInPixels - 2 * borderPadding,
 				cardLongSideInPixels - 2 * borderPadding);
 			var titleFont = new Font(headerFontFamily, questHeaderFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
-			graphics.DrawString(questAidTitle, titleFont, blackBrush, titleRectangle, horizontalCenterAlignment);
+			DrawString(graphics, questAidTitle, titleFont, blackBrush, titleRectangle);
 
 			var textRectangle = new RectangleF(
 				borderPadding,
@@ -143,26 +158,27 @@ namespace Splendor
 			var questAidString = "After completing your action each day, check if you have the tools depicted on each quest." +
 				"\r\n\r\nIf you do, equip your villagers with those tools and they will complete the quest for you. Take the quest card and place in front of you." +
 				"\r\n\r\nDon't worry, they'll return the tools in the same condition (more or less). ";
-			graphics.DrawString(questAidString, textFont, blackBrush, textRectangle);
+			DrawString(graphics, questAidString, textFont, blackBrush, textRectangle);
 
 			var questSetupString = "Setup: Reveal 3 Quest cards and return the rest to the box. ";
-			graphics.DrawString(questSetupString, textFont, blackBrush, textRectangle, verticalFarAlignment);
+			DrawString(graphics, questSetupString, textFont, blackBrush, textRectangle, verticalFarAlignment);
 
 			return bitmap;
 		}
 
 		public Image CreatePlayerAidFront()
 		{
-			var bitmap = CreateBitmap(cardLongSideInPixels, cardShortSideInPixels);
+			var bitmap = CreateBitmap(ImageOrientation.Landscape);
 			var graphics = Graphics.FromImage(bitmap);
-			PrintCardBorder(graphics, null, cardLongSideInPixels, cardShortSideInPixels, standardCardBackgroundColor);
+			PrintCardBorder(graphics, null, ImageOrientation.Landscape, standardCardBackgroundColor);
 			var playerAidString = "Each day, you may take one of the following actions:" +
 				"\r\n\u2022  Scavenge for Resources: gather 3 different resources" +
 				"\r\n\u2022  Hunt for Resources: gather 2 of the same resource [as long as there is an abundance (4+)]" +
 				"\r\n\u2022  Find Blueprint: Reserve a Tool from the display into your hand and take 1 gold [if available]" +
 				"\r\n\u2022  Craft: Take a Tool from the display, place in front of you and return the depicted resources to the supply" +
 				"\r\n\r\nAfter your action, check if you have the tools to complete any quests.";
-			graphics.DrawString(
+			DrawString(
+				graphics,
 				playerAidString,
 				new Font(bodyFontFamily, bodyFontSize, GraphicsUnit.Pixel),
 				blackBrush,
@@ -173,9 +189,9 @@ namespace Splendor
 
 		public Image CreatePlayerAidBack()
 		{
-			var bitmap = CreateBitmap(cardLongSideInPixels, cardShortSideInPixels);
+			var bitmap = CreateBitmap(ImageOrientation.Landscape);
 			var graphics = Graphics.FromImage(bitmap);
-			PrintCardBorder(graphics, null, cardLongSideInPixels, cardShortSideInPixels, standardCardBackgroundColor);
+			PrintCardBorder(graphics, null, ImageOrientation.Landscape, standardCardBackgroundColor);
 			PrintLimitsReminder(graphics);
 
 			var columnWidth = resourceKeyImageSize * 2 + arrowImageSize + 2 * ArrowPadding;
@@ -211,8 +227,8 @@ namespace Splendor
 				cardShortSideInPixels - (limitsReminderFont.Height + borderPadding),
 				cardLongSideInPixels - (2 * borderPadding),
 				limitsReminderFont.Height + borderPadding);
-			graphics.DrawString(handLimitString, limitsReminderFont, blackBrush, textRectangle, horizontalNearAlignment);
-			graphics.DrawString(resourceLimitString, limitsReminderFont, blackBrush, textRectangle, horizontalFarAlignment);
+			DrawString(graphics, handLimitString, limitsReminderFont, blackBrush, textRectangle, horizontalNearAlignment);
+			DrawString(graphics, resourceLimitString, limitsReminderFont, blackBrush, textRectangle, horizontalFarAlignment);
 		}
 
 		private void PrintImageMappingPng(Graphics graphics, string filename1, string label1, string filename2, string label2, int x, int y, int imageSize)
@@ -232,18 +248,18 @@ namespace Splendor
 			var label2Rectangle = new RectangleF(x + imageSize + 2 * ArrowPadding + arrowImageSize - (arrowImageSize + 2 * ArrowPadding), y + imageSize, mappingTextWidth, imageMappingFont.Height);
 
 			PrintScaledImage(graphics, image1, x, y, imageSize, imageSize);
-			graphics.DrawString(label1, imageMappingFont, blackBrush, label1Rectangle, horizontalCenterAlignment);
+			DrawString(graphics, label1, imageMappingFont, blackBrush, label1Rectangle, horizontalCenterAlignment);
 			PrintScaledPng(graphics, "arrow", x + imageSize + ArrowPadding, y + (imageSize / 2), arrowImageSize, arrowImageSize);
 			PrintScaledImage(graphics, image2, x + imageSize + ArrowPadding + arrowImageSize + ArrowPadding, y, imageSize, imageSize);
-			graphics.DrawString(label2, imageMappingFont, blackBrush, label2Rectangle, horizontalCenterAlignment);
+			DrawString(graphics, label2, imageMappingFont, blackBrush, label2Rectangle, horizontalCenterAlignment);
 		}
 
 		public Image CreateToolCardBack(int tier)
 		{
-			var cardBackBitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var cardBackBitmap = CreateBitmap(ImageOrientation.Portrait);
 			var graphics = Graphics.FromImage(cardBackBitmap);
 
-			PrintCardBorder(graphics, null, cardShortSideInPixels, cardLongSideInPixels, GetTierBackColor(tier));
+			PrintCardBorder(graphics, null, ImageOrientation.Portrait, GetTierBackColor(tier));
 			DrawIconPentagon(graphics);
 			PrintTier(graphics, tier);
 			PrintGameTitle(graphics);
@@ -267,7 +283,7 @@ namespace Splendor
 
 		private void DrawIconPentagon(Graphics graphics)
 		{
-			var radius = (cardShortSideInPixels*(7.0/10))/1.902;
+			var radius = ((cardShortSideInPixels - borderPadding)*(7.0/10))/1.902;
 
 			var x = cardShortSideInPixels / 2;
 			var y = cardLongSideInPixels / 2;
@@ -300,7 +316,8 @@ namespace Splendor
 
 		private void PrintCardBackString(Graphics graphics, string text, int textSize)
 		{
-			graphics.DrawString(
+			DrawString(
+				graphics,
 				text,
 				new Font(cardBackFontFamily, textSize, FontStyle.Bold, GraphicsUnit.Pixel),
 				new SolidBrush(Color.Black),
@@ -311,13 +328,15 @@ namespace Splendor
 		private void PrintGameTitle(Graphics graphics)
 		{
 			var titleFont = new Font(cardBackFontFamily, gameTitleFontSize, GraphicsUnit.Pixel);
-			graphics.DrawString(
+			DrawString(
+				graphics,
 				"Splendor",
 				titleFont,
 				blackBrush,
 				new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 2 * borderPadding, titleFont.Height),
 				horizontalCenterAlignment);
-			graphics.DrawString(
+			DrawString(
+				graphics,
 				"Forge",
 				titleFont,
 				blackBrush,
@@ -327,68 +346,39 @@ namespace Splendor
 
 		public Image CreateToolCardFront(NewCard newCard)
 		{
-			var cardBitmap = CreateBitmap(cardShortSideInPixels, cardLongSideInPixels);
+			var cardBitmap = CreateBitmap(ImageOrientation.Portrait);
 			var graphics = Graphics.FromImage(cardBitmap);
-			PrintCardBorder(graphics, newCard.Color, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
-			var cardNameFont = new Font(headerFontFamily, toolHeaderFontSize, GraphicsUnit.Pixel);
+			PrintCardBorder(graphics, newCard.Color, ImageOrientation.Portrait, standardCardBackgroundColor);
 			if (newCard.Points > 0)
 				PrintPointsForTool(graphics, newCard);
-			PrintToolIcon(newCard, graphics, (cardShortSideInPixels / 2) - (cardFrontSmallImageSize / 2), borderPadding);
-			PrintResourceProduced(newCard, graphics, cardShortSideInPixels - (borderPadding + cardFrontSmallImageSize), borderPadding);
-			PrintCardName(newCard, graphics, cardNameFont);
-			PrintToolImage(newCard, graphics, cardNameFont);
+			PrintToolIcon(newCard, graphics, (cardShortSideInPixels / 2) - (cardFrontSmallImageSize / 2), nestedBorderPadding);
+			PrintResourceProduced(newCard, graphics, cardShortSideInPixels - (nestedBorderPadding + cardFrontSmallImageSize), nestedBorderPadding);
+			PrintCardName(newCard, graphics);
+			PrintToolImage(newCard, graphics);
 			PrintCostsForTool(newCard, graphics);
 			return cardBitmap;
 		}
 
-		private void PrintCardBorder(Graphics graphics, Color? middleBorderColor, int topSideInPixels, int leftSideInPixels, Color backgroundColor)
+		private void PrintCardName(NewCard newCard, Graphics graphics)
 		{
-			graphics.FillRoundedRectangle(
-				new SolidBrush(Color.Black),
-				0,
-				0,
-				topSideInPixels,
-				leftSideInPixels,
-				borderRadius);
-			if (middleBorderColor.HasValue)
-				graphics.FillRoundedRectangle(
-					new SolidBrush(middleBorderColor.Value),
-					borderThickness,
-					borderThickness,
-					topSideInPixels - 2 * borderThickness,
-					leftSideInPixels - 2 * borderThickness,
-					borderRadius);
-			graphics.FillRoundedRectangle(
-				new SolidBrush(backgroundColor),
-				2 * borderThickness,
-				2 * borderThickness,
-				topSideInPixels-(4 * borderThickness),
-				leftSideInPixels-(4 * borderThickness),
-				borderRadius);
-		}
-
-		private void PrintCardName(NewCard newCard, Graphics graphics, Font cardNameFont)
-		{
-			var topRectangle = new RectangleF(borderPadding, borderPadding + cardFrontSmallImageSize, cardShortSideInPixels - 2 * borderPadding, cardNameFont.Height);
-			var bottomRectangle = new RectangleF(borderPadding, borderPadding + cardFrontSmallImageSize + cardNameFont.Height, cardShortSideInPixels - 2 * borderPadding, cardNameFont.Height);
+			var cardNameFont = new Font(headerFontFamily, toolHeaderFontSize, GraphicsUnit.Pixel);
+			var topRectangle = new RectangleF(nestedBorderPadding, nestedBorderPadding + cardFrontSmallImageSize, cardShortSideInPixels - 2 * nestedBorderPadding, cardNameFont.Height);
+			var bottomRectangle = new RectangleF(nestedBorderPadding, nestedBorderPadding + cardFrontSmallImageSize + cardNameFont.Height, cardShortSideInPixels - 2 * nestedBorderPadding, cardNameFont.Height);
 			var nameParts = newCard.Name.Split(' ');
 			var firstNamePart = nameParts.Take(nameParts.Length - 2).ToList();
 			var lastNamePart = nameParts.Skip(firstNamePart.Count).ToList();
-			graphics.DrawString(string.Join(" ", firstNamePart), cardNameFont, blackBrush, topRectangle, fullCenterAlignment);
-			graphics.DrawString(string.Join(" ", lastNamePart), cardNameFont, blackBrush, bottomRectangle, fullCenterAlignment);
+			DrawString(graphics, string.Join(" ", firstNamePart), cardNameFont, blackBrush, topRectangle, fullCenterAlignment);
+			DrawString(graphics, string.Join(" ", lastNamePart), cardNameFont, blackBrush, bottomRectangle, fullCenterAlignment);
 		}
 
-		private void PrintToolImage(NewCard newCard, Graphics graphics, Font cardNameFont)
+		private void PrintToolImage(NewCard newCard, Graphics graphics)
 		{
-			const int cardFrontLargeImageSize = cardShortSideInPixels - (2 * borderPadding + 2 * cardFrontSmallImageSize);
-			//var yOffset = borderPadding + cardFrontSmallImageSize + cardNameFont.Height * 2;
-			//var y = ((yOffset + cardLongSideInPixels - borderPadding) / 2) - (cardFrontLargeImageSize / 2);
-			var y = (cardLongSideInPixels/2) - (cardFrontLargeImageSize/2);
+			const int cardFrontLargeImageSize = cardShortSideInPixels - (2 * nestedBorderPadding + 2 * cardFrontSmallImageSize);
 			PrintScaledPng(
 				graphics,
 				newCard.Tool,
-				(cardShortSideInPixels / 2) - (cardFrontLargeImageSize / 2),
-				y,
+				cardShortSideInPixels / 2 - cardFrontLargeImageSize / 2,
+				cardLongSideInPixels/2 - (cardFrontLargeImageSize/2),
 				cardFrontLargeImageSize,
 				cardFrontLargeImageSize);
 		}
@@ -410,8 +400,8 @@ namespace Splendor
 				PrintImageWithText(
 					graphics,
 					costList[costIndex].Key,
-					borderPadding,
-					cardLongSideInPixels - ((costIndex + 1)*cardFrontSmallImageSize + borderPadding),
+					nestedBorderPadding,
+					cardLongSideInPixels - ((costIndex + 1)*cardFrontSmallImageSize + nestedBorderPadding),
 					cardFrontSmallImageSize,
 					costList[costIndex].Value.ToString(),
 					0,
@@ -430,7 +420,7 @@ namespace Splendor
 				font.FontFamily,
 				(int)font.Style,
 				font.Size,
-				new PointF(textX, textY),
+				new PointF(origin.X + textX, origin.Y + textY),
 				new StringFormat());
 			graphics.FillPath(Brushes.White, path);
 			graphics.DrawPath(new Pen(Color.Black, textOutlineWidth), path);
@@ -441,8 +431,8 @@ namespace Splendor
 			PrintPoints(
 				graphics,
 				newCard.Points,
-				borderPadding,
-				borderPadding);
+				nestedBorderPadding,
+				nestedBorderPadding);
 		}
 
 		private void PrintPoints(Graphics graphics, int points, int x, int y)
@@ -455,13 +445,13 @@ namespace Splendor
 				font.FontFamily,
 				(int)font.Style,
 				font.Size,
-				new RectangleF(x, y, wreathImageWidth, cardFrontSmallImageSize),
+				new RectangleF(origin.X + x, origin.Y + y, wreathImageWidth, cardFrontSmallImageSize),
 				horizontalCenterAlignment);
 			graphics.FillPath(Brushes.White, path);
 			graphics.DrawPath(new Pen(Color.Black, textOutlineWidth), path);
 		}
 
-		private static void PrintScaledPng(Graphics graphics, string fileName, int x, int y, int width, int height)
+		private void PrintScaledPng(Graphics graphics, string fileName, int x, int y, int width, int height)
 		{
 			using (var srcImage = Image.FromFile($"Images\\{fileName}.png"))
 			{
@@ -469,7 +459,7 @@ namespace Splendor
 			}
 		}
 
-		private static void PrintScaledJpg(Graphics graphics, string fileName, int x, int y, int width, int height)
+		private void PrintScaledJpg(Graphics graphics, string fileName, int x, int y, int width, int height)
 		{
 			using (var srcImage = Image.FromFile($"Images\\{fileName}.jpg"))
 			{
@@ -477,12 +467,24 @@ namespace Splendor
 			}
 		}
 
-		private static void PrintScaledImage(Graphics graphics, Image image, int x, int y, int width, int height)
+		private void PrintScaledImage(Graphics graphics, Image image, int x, int y, int width, int height)
 		{
 			graphics.SmoothingMode = SmoothingMode.AntiAlias;
 			graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
 			graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-			graphics.DrawImage(image, new Rectangle(x, y, width, height));
+			graphics.DrawImage(image, new Rectangle(origin.X + x, origin.Y + y, width, height));
+		}
+
+		private Bitmap CreateBitmap(ImageOrientation orientation)
+		{
+			switch (orientation)
+			{
+				case ImageOrientation.Landscape:
+					return CreateBitmap(cardLongSideInPixelsWithBleed, cardShortSideInPixelsWithBleed);
+				case ImageOrientation.Portrait:
+					return CreateBitmap(cardShortSideInPixelsWithBleed, cardLongSideInPixelsWithBleed);
+			}
+			return null;
 		}
 
 		private Bitmap CreateBitmap(int width, int height)
@@ -490,6 +492,47 @@ namespace Splendor
 			var bitmap = new Bitmap(width, height);
 			bitmap.SetResolution(dpi, dpi);
 			return bitmap;
+		}
+
+		private void DrawString(Graphics graphics, string text, Font font, Brush brush, RectangleF rectangle)
+		{
+			graphics.DrawString(text, font, brush, new RectangleF(origin.X + rectangle.X, origin.Y + rectangle.Y, rectangle.Width, rectangle.Height), horizontalCenterAlignment);
+		}
+
+		private void DrawString(Graphics graphics, string text, Font font, Brush brush, RectangleF rectangle, StringFormat stringFormat)
+		{
+			graphics.DrawString(text, font, brush, new RectangleF(origin.X + rectangle.X, origin.Y + rectangle.Y, rectangle.Width, rectangle.Height), stringFormat);
+		}
+
+		private void PrintCardBorder(Graphics graphics, Color? middleBorderColor, ImageOrientation orientation, Color backgroundColor)
+		{
+			var topSideInPixels = orientation == ImageOrientation.Landscape ? cardLongSideInPixels : cardShortSideInPixels;
+			var leftSideInPixels = orientation == ImageOrientation.Portrait ? cardLongSideInPixels : cardShortSideInPixels;
+			var topSideInPixelsWithBleed = orientation == ImageOrientation.Landscape ? cardLongSideInPixelsWithBleed : cardShortSideInPixelsWithBleed;
+			var leftSideInPixelsWithBleed = orientation == ImageOrientation.Portrait ? cardLongSideInPixelsWithBleed : cardShortSideInPixelsWithBleed;
+
+			graphics.FillRoundedRectangle(
+				new SolidBrush(Color.Black),
+				0,
+				0,
+				topSideInPixelsWithBleed,
+				leftSideInPixelsWithBleed,
+				borderRadius);
+			graphics.FillRoundedRectangle(
+				new SolidBrush(middleBorderColor ?? backgroundColor),
+				origin.X + borderThickness,
+				origin.Y + borderThickness,
+				topSideInPixels - 2 * borderThickness,
+				leftSideInPixels - 2 * borderThickness,
+				borderRadius);
+			if (middleBorderColor.HasValue)
+				graphics.FillRoundedRectangle(
+					new SolidBrush(backgroundColor),
+					origin.X + (int)(borderThickness * 1.5),
+					origin.Y + (int)(borderThickness * 1.5),
+					topSideInPixels-(int)(3 * borderThickness),
+					leftSideInPixels-(int)(3 * borderThickness),
+					borderRadius);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -7,12 +8,13 @@ namespace Splendor
 {
 	class Program
 	{
-		//TODO: Fix borders (add bleed areas, etc, make line up right with back)
 		//TODO: thicker card stock
 		//TODO: Remove setup from quest aid and add message about only 1 per turn.
 		//TODO: Add a full setup player aid card
 		//TODO: Change quest back color?
 		//TODO: Make quest aid double-sided? Or put full setup on it
+
+		private static bool useOverlay = false;
 
 		//r = red = axe = wood
 		//g = green = chisel = stone
@@ -43,7 +45,7 @@ namespace Splendor
 			var imageCreator = new ImageCreator();
 
 			var newCards = ConvertCardsToNewCards();
-			var toolFrontImages = newCards.Select(newCard => new ImageToSave {Image = imageCreator.CreateToolCardFront(newCard), Name = $"Tier {newCard.Tier} Front - {newCard.Name}"});
+			var toolFrontImages = newCards.Select((newCard, i) => new ImageToSave {Image = imageCreator.CreateToolCardFront(newCard), Name = $"Tier {newCard.Tier} Front - {newCard.Name} {i}"}).ToList();
 			var toolBackImages = Enumerable.Range(1, 3).Select(index => new ImageToSave {Image = imageCreator.CreateToolCardBack(index), Name = $"Tier {index} Back"});
 			var playerAidFrontImage = new [] {new ImageToSave {Image = imageCreator.CreatePlayerAidFront(), Name = "Player Aid Front"}};
 			var playerAidBackImage = new [] {new ImageToSave {Image = imageCreator.CreatePlayerAidBack(), Name = "Player Aid Back"}};
@@ -58,10 +60,25 @@ namespace Splendor
 				.Concat(questFrontImages)
 				.Concat(questAidImage)
 				.Concat(questBackImage);
-
-			foreach (var image in allImages)
+			if (useOverlay)
 			{
-				image.Image.Save($"c:\\delete\\images\\{image.Name}.png", ImageFormat.Png);
+				var overlay = new Bitmap("c:\\delete\\poker-card.png");
+				overlay.SetResolution(300, 300);
+				var matrix = new ColorMatrix {Matrix33 = .5f};
+				var attributes = new ImageAttributes();
+				attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+				foreach (var image in allImages)
+				{
+					var graphics = Graphics.FromImage(image.Image);
+					graphics.DrawImage(overlay, new Rectangle(0, 0, overlay.Width, overlay.Height), 0, 0, overlay.Width, overlay.Height,
+						GraphicsUnit.Pixel, attributes);
+					image.Image.Save($"c:\\delete\\images\\{image.Name}.png", ImageFormat.Png);
+				}
+			}
+			else
+			{
+				foreach (var image in allImages)
+					image.Image.Save($"c:\\delete\\images\\{image.Name}.png", ImageFormat.Png);
 			}
 		}
 
