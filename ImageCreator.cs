@@ -47,14 +47,16 @@ namespace Splendor
 		private const int borderThickness = (int) (20 * dpiFactor);
 		private const int borderPadding = (int) (25 * dpiFactor);
 		private const int nestedBorderPadding = borderPadding + 25;
-		private const int limitsFontSize = (int) (9 * dpiFactor);
-		private const int bodyFontSize = (int) (10 * dpiFactor);
-		private const int questHeaderFontSize = (int) (12 * dpiFactor);
-		private const int toolHeaderFontSize = (int) (18 * dpiFactor);
-		private const int imageLabelFontSize = (int) (18 * dpiFactor);
+
+		private const int limitsFontSize = (int) (10 * dpiFactor);
+		private const int bodyFontSize = (int) (11 * dpiFactor);
+		private const int questHeaderFontSize = (int) (13 * dpiFactor);
+		private const int toolHeaderFontSize = (int) (20 * dpiFactor);
+		private const int imageLabelFontSize = (int) (20 * dpiFactor);
 		private const int gameTitleFontSize = (int) (38 * dpiFactor);
 		private const int questBackFontSize = (int) (45 * dpiFactor);
 		private const int tierTextFontSize = (int) (80 * dpiFactor);
+
 		private const int resourceKeyImageSize = (int) (35 * dpiFactor);
 		private const int arrowImageSize = (int) (10 * dpiFactor);
 		private const int questCostImageSize = (int) (35 * dpiFactor);
