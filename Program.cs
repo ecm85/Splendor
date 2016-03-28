@@ -7,7 +7,6 @@ namespace Splendor
 {
 	class Program
 	{
-		//TODO: Move tool icons/points/resource produced to top of card
 		//TODO: Fix borders (add bleed areas, etc, make line up right with back)
 		//TODO: thicker card stock
 		//TODO: Remove setup from quest aid and add message about only 1 per turn.

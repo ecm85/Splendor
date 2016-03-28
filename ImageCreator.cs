@@ -48,7 +48,6 @@ namespace Splendor
 		private const int questCostImageSize = (int) (40 * dpiFactor);
 		private const int pentagonImageSize = (int) (30 * dpiFactor);
 		private const int wreathImageWidth = (int) (55 * dpiFactor);
-		private const int wreathImageHeight = (int) (50 * dpiFactor);
 		private const int cardFrontSmallImageSize = (int) (50 * dpiFactor);
 		private const int questImageYBottomPadding = (int) (7 * dpiFactor);
 
@@ -332,13 +331,13 @@ namespace Splendor
 			var graphics = Graphics.FromImage(cardBitmap);
 			PrintCardBorder(graphics, newCard.Color, cardShortSideInPixels, cardLongSideInPixels, standardCardBackgroundColor);
 			var cardNameFont = new Font(headerFontFamily, toolHeaderFontSize, GraphicsUnit.Pixel);
-			PrintCardName(newCard, graphics, cardNameFont);
-			PrintToolImage(newCard, graphics);
-			PrintResourceProduced(newCard, graphics, cardShortSideInPixels - (borderPadding + cardFrontSmallImageSize), borderPadding + 2 * cardNameFont.Height);
-			PrintToolIcon(newCard, graphics, borderPadding, borderPadding + 2 * cardNameFont.Height);
-			PrintCostsForTool(newCard, graphics);
 			if (newCard.Points > 0)
 				PrintPointsForTool(graphics, newCard);
+			PrintToolIcon(newCard, graphics, (cardShortSideInPixels / 2) - (cardFrontSmallImageSize / 2), borderPadding);
+			PrintResourceProduced(newCard, graphics, cardShortSideInPixels - (borderPadding + cardFrontSmallImageSize), borderPadding);
+			PrintCardName(newCard, graphics, cardNameFont);
+			PrintToolImage(newCard, graphics, cardNameFont);
+			PrintCostsForTool(newCard, graphics);
 			return cardBitmap;
 		}
 
@@ -370,8 +369,8 @@ namespace Splendor
 
 		private void PrintCardName(NewCard newCard, Graphics graphics, Font cardNameFont)
 		{
-			var topRectangle = new RectangleF(borderPadding, borderPadding, cardShortSideInPixels - 2 * borderPadding, cardNameFont.Height);
-			var bottomRectangle = new RectangleF(borderPadding, borderPadding + cardNameFont.Height, cardShortSideInPixels - 2 * borderPadding, cardNameFont.Height);
+			var topRectangle = new RectangleF(borderPadding, borderPadding + cardFrontSmallImageSize, cardShortSideInPixels - 2 * borderPadding, cardNameFont.Height);
+			var bottomRectangle = new RectangleF(borderPadding, borderPadding + cardFrontSmallImageSize + cardNameFont.Height, cardShortSideInPixels - 2 * borderPadding, cardNameFont.Height);
 			var nameParts = newCard.Name.Split(' ');
 			var firstNamePart = nameParts.Take(nameParts.Length - 2).ToList();
 			var lastNamePart = nameParts.Skip(firstNamePart.Count).ToList();
@@ -379,14 +378,17 @@ namespace Splendor
 			graphics.DrawString(string.Join(" ", lastNamePart), cardNameFont, blackBrush, bottomRectangle, fullCenterAlignment);
 		}
 
-		private void PrintToolImage(NewCard newCard, Graphics graphics)
+		private void PrintToolImage(NewCard newCard, Graphics graphics, Font cardNameFont)
 		{
 			const int cardFrontLargeImageSize = cardShortSideInPixels - (2 * borderPadding + 2 * cardFrontSmallImageSize);
+			//var yOffset = borderPadding + cardFrontSmallImageSize + cardNameFont.Height * 2;
+			//var y = ((yOffset + cardLongSideInPixels - borderPadding) / 2) - (cardFrontLargeImageSize / 2);
+			var y = (cardLongSideInPixels/2) - (cardFrontLargeImageSize/2);
 			PrintScaledPng(
 				graphics,
 				newCard.Tool,
 				(cardShortSideInPixels / 2) - (cardFrontLargeImageSize / 2),
-				(cardLongSideInPixels / 2) - (cardFrontLargeImageSize / 2),
+				y,
 				cardFrontLargeImageSize,
 				cardFrontLargeImageSize);
 		}
@@ -439,13 +441,13 @@ namespace Splendor
 			PrintPoints(
 				graphics,
 				newCard.Points,
-				cardShortSideInPixels - (borderPadding + wreathImageWidth),
-				cardLongSideInPixels - (borderPadding + wreathImageHeight));
+				borderPadding,
+				borderPadding);
 		}
 
 		private void PrintPoints(Graphics graphics, int points, int x, int y)
 		{
-			PrintScaledPng(graphics, "Wreath", x, y, wreathImageWidth, wreathImageHeight);
+			PrintScaledPng(graphics, "Wreath", x, y, wreathImageWidth, cardFrontSmallImageSize);
 			var path = new GraphicsPath();
 			var font = new Font(bodyFontFamily, imageLabelFontSize);
 			path.AddString(
@@ -453,7 +455,7 @@ namespace Splendor
 				font.FontFamily,
 				(int)font.Style,
 				font.Size,
-				new RectangleF(x, y, wreathImageWidth, wreathImageHeight),
+				new RectangleF(x, y, wreathImageWidth, cardFrontSmallImageSize),
 				horizontalCenterAlignment);
 			graphics.FillPath(Brushes.White, path);
 			graphics.DrawPath(new Pen(Color.Black, textOutlineWidth), path);
