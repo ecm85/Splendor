@@ -34,7 +34,6 @@ namespace Splendor
 
 		private readonly StringFormat horizontalCenterAlignment = new StringFormat { Alignment = StringAlignment.Center};
 		private readonly StringFormat fullCenterAlignment = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center};
-		private readonly StringFormat verticalFarAlignment = new StringFormat {LineAlignment = StringAlignment.Far};
 		private readonly StringFormat horizontalNearAlignment = new StringFormat {Alignment = StringAlignment.Near};
 		private readonly StringFormat horizontalFarAlignment = new StringFormat {Alignment = StringAlignment.Far};
 		private readonly SolidBrush blackBrush = new SolidBrush(Color.Black);
@@ -72,7 +71,7 @@ namespace Splendor
 			var cardBackBitmap = CreateBitmap(ImageOrientation.Portrait);
 			var graphics = Graphics.FromImage(cardBackBitmap);
 
-			PrintCardBorder(graphics, null, ImageOrientation.Portrait, standardCardBackgroundColor);
+			PrintCardBorder(graphics, null, ImageOrientation.Portrait, Color.DodgerBlue);
 			DrawIconPentagon(graphics);
 			PrintCardBackString(graphics, questBackText, questBackFontSize);
 			PrintGameTitle(graphics);
@@ -159,11 +158,41 @@ namespace Splendor
 
 			var questAidString = "After completing your action each day, check if you have the tools depicted on each quest." +
 				"\r\n\r\nIf you do, equip your villagers with those tools and they will complete the quest for you. Take the quest card and place in front of you." +
-				"\r\n\r\nDon't worry, they'll return the tools in the same condition (more or less). ";
+				"\r\n\r\nDon't worry, they'll return the tools in the same condition (more or less). " +
+				"\r\n\r\nYou only have enough villagers to complete one quest each day. If you gain the tool to complete two quests on the same day, one must be completed on the next day (or be stolen by someone else).";
 			DrawString(graphics, questAidString, textFont, blackBrush, textRectangle);
 
-			var questSetupString = "Setup: Reveal 3 Quest cards and return the rest to the box. ";
-			DrawString(graphics, questSetupString, textFont, blackBrush, textRectangle, verticalFarAlignment);
+			return bitmap;
+		}
+
+		public Image CreateSetupAidFront()
+		{
+			var bitmap = CreateBitmap(ImageOrientation.Portrait);
+			var graphics = Graphics.FromImage(bitmap);
+
+			PrintCardBorder(graphics, null, ImageOrientation.Portrait, standardCardBackgroundColor);
+
+			var setupAidTitle = "Game Setup";
+			var titleRectangle = new RectangleF(
+				borderPadding,
+				borderPadding,
+				cardShortSideInPixels - 2 * borderPadding,
+				cardLongSideInPixels - 2 * borderPadding);
+			var titleFont = new Font(headerFontFamily, questHeaderFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
+			DrawString(graphics, setupAidTitle, titleFont, blackBrush, titleRectangle);
+
+			var textRectangle = new RectangleF(
+				borderPadding,
+				borderPadding + titleFont.Height,
+				cardShortSideInPixels - 2 * borderPadding,
+				cardLongSideInPixels - (2 * borderPadding + titleFont.Height));
+			var textFont = new Font(bodyFontFamily, bodyFontSize, GraphicsUnit.Pixel);
+
+			var setupAidString =
+				"\r\n\r\nResources:\r\nGold: Always 5\r\n4 Players: 7 of each other resource\r\n3 Players: 5 of each other resource\r\n2 Players: 4 of each other resource" +
+				"\r\n\r\n\r\nQuests:\r\n 1 + Player Count" +
+				"\r\n\r\n\r\nTools:\r\n4 per Tier";
+			DrawString(graphics, setupAidString, textFont, blackBrush, textRectangle);
 
 			return bitmap;
 		}
@@ -532,8 +561,8 @@ namespace Splendor
 					new SolidBrush(backgroundColor),
 					origin.X + (int)(borderThickness * 1.5),
 					origin.Y + (int)(borderThickness * 1.5),
-					topSideInPixels-(int)(3 * borderThickness),
-					leftSideInPixels-(int)(3 * borderThickness),
+					topSideInPixels - 3 * borderThickness,
+					leftSideInPixels - 3 * borderThickness,
 					borderRadius);
 		}
 	}

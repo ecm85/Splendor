@@ -8,12 +8,6 @@ namespace Splendor
 {
 	class Program
 	{
-		//TODO: thicker card stock
-		//TODO: Remove setup from quest aid and add message about only 1 per turn.
-		//TODO: Add a full setup player aid card
-		//TODO: Change quest back color?
-		//TODO: Make quest aid double-sided? Or put full setup on it
-
 		private static bool useOverlay = false;
 
 		//r = red = axe = wood
@@ -52,6 +46,7 @@ namespace Splendor
 			var questFrontImages = QuestFactory.CreateQuests().Select(quest => new ImageToSave {Image = imageCreator.CreateQuestFront(quest), Name = $"Quest - {quest.Name}"});
 			var questAidImage = new [] {new ImageToSave {Image = imageCreator.CreateQuestAidFront(), Name = "Quest Aid"}};
 			var questBackImage = new [] {new ImageToSave {Image = imageCreator.CreateQuestBack(), Name = "Quest Back"}};
+			var setupAidFront = new[] {new ImageToSave {Image = imageCreator.CreateSetupAidFront(), Name = "Setup Aid"}};
 
 			var allImages = toolFrontImages
 				.Concat(toolBackImages)
@@ -59,7 +54,8 @@ namespace Splendor
 				.Concat(playerAidBackImage)
 				.Concat(questFrontImages)
 				.Concat(questAidImage)
-				.Concat(questBackImage);
+				.Concat(questBackImage)
+				.Concat(setupAidFront);
 			if (useOverlay)
 			{
 				var overlay = new Bitmap("c:\\delete\\poker-card.png");
