@@ -58,7 +58,7 @@ namespace Splendor
 				.Concat(questBackImage)
 				.Concat(setupAidFront);
 
-			var dateStamp = DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss");
+			var dateStamp = DateTime.Now.ToString("yyyyMMddTHHmmss");
 			Directory.CreateDirectory($"c:\\delete\\images\\{dateStamp}");
 
 			if (useOverlay)
@@ -91,7 +91,7 @@ namespace Splendor
 
 		private static IList<NewCard> ConvertCardsToNewCards()
 		{
-			var strings = File.ReadAllLines("c:\\delete\\input");
+			var strings = File.ReadAllLines("input.txt");
 			var cards = strings
 				.Select(s => s.Split('\t'))
 				.Select(tokens => new Card
