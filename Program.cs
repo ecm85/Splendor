@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -40,10 +41,10 @@ namespace Splendor
 
 			var newCards = ConvertCardsToNewCards();
 			var toolFrontImages = newCards.Select((newCard, i) => new ImageToSave {Image = imageCreator.CreateToolCardFront(newCard), Name = $"Tier {newCard.Tier} Front - {newCard.Name} {i}"}).ToList();
-			var toolBackImages = Enumerable.Range(1, 3).Select(index => new ImageToSave {Image = imageCreator.CreateToolCardBack(index), Name = $"Tier {index} Back"});
+			var toolBackImages = Enumerable.Range(1, 3).Select(index => new ImageToSave {Image = imageCreator.CreateToolCardBack(index), Name = $"Tier {index} Back"}).ToList();
 			var playerAidFrontImage = new [] {new ImageToSave {Image = imageCreator.CreatePlayerAidFront(), Name = "Player Aid Front"}};
 			var playerAidBackImage = new [] {new ImageToSave {Image = imageCreator.CreatePlayerAidBack(), Name = "Player Aid Back"}};
-			var questFrontImages = QuestFactory.CreateQuests().Select(quest => new ImageToSave {Image = imageCreator.CreateQuestFront(quest), Name = $"Quest - {quest.Name}"});
+			var questFrontImages = QuestFactory.CreateQuests().Select(quest => new ImageToSave {Image = imageCreator.CreateQuestFront(quest), Name = $"Quest - {quest.Name}"}).ToList();
 			var questAidImage = new [] {new ImageToSave {Image = imageCreator.CreateQuestAidFront(), Name = "Quest Aid"}};
 			var questBackImage = new [] {new ImageToSave {Image = imageCreator.CreateQuestBack(), Name = "Quest Back"}};
 			var setupAidFront = new[] {new ImageToSave {Image = imageCreator.CreateSetupAidFront(), Name = "Setup Aid"}};
@@ -56,26 +57,36 @@ namespace Splendor
 				.Concat(questAidImage)
 				.Concat(questBackImage)
 				.Concat(setupAidFront);
+
+			var dateStamp = DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss");
+			Directory.CreateDirectory($"c:\\delete\\images\\{dateStamp}");
+
 			if (useOverlay)
 			{
 				var overlay = new Bitmap("c:\\delete\\poker-card.png");
 				overlay.SetResolution(300, 300);
-				var matrix = new ColorMatrix {Matrix33 = .5f};
+				var landscapeOverlay = new Bitmap(overlay);
+				landscapeOverlay.RotateFlip(RotateFlipType.Rotate90FlipNone);
+				var matrix = new ColorMatrix { Matrix33 = .5f };
 				var attributes = new ImageAttributes();
 				attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
 				foreach (var image in allImages)
 				{
 					var graphics = Graphics.FromImage(image.Image);
-					graphics.DrawImage(overlay, new Rectangle(0, 0, overlay.Width, overlay.Height), 0, 0, overlay.Width, overlay.Height,
-						GraphicsUnit.Pixel, attributes);
-					image.Image.Save($"c:\\delete\\images\\{image.Name}.png", ImageFormat.Png);
+					if (image.Image.Width < image.Image.Height)
+					{
+						graphics.DrawImage(overlay, new Rectangle(0, 0, overlay.Width, overlay.Height), 0, 0, overlay.Width, overlay.Height, GraphicsUnit.Pixel, attributes);
+					}
+					else
+					{
+						graphics.DrawImage(landscapeOverlay, new Rectangle(0, 0, landscapeOverlay.Width, landscapeOverlay.Height), 0, 0, landscapeOverlay.Width, landscapeOverlay.Height, GraphicsUnit.Pixel, attributes);
+					}
 				}
 			}
-			else
-			{
-				foreach (var image in allImages)
-					image.Image.Save($"c:\\delete\\images\\{image.Name}.png", ImageFormat.Png);
-			}
+
+			foreach (var image in allImages)
+				image.Image.Save($"c:\\delete\\images\\{dateStamp}\\{image.Name}.png", ImageFormat.Png);
 		}
 
 		private static IList<NewCard> ConvertCardsToNewCards()
