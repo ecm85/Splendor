@@ -52,11 +52,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Card.cs" />
+    <Compile Include="CardImage.cs" />
+    <Compile Include="ToolCard.cs" />
+    <Compile Include="GraphicsUtilities.cs" />
     <Compile Include="GraphicsExtensions.cs" />
-    <Compile Include="ImageCreator.cs" />
+    <Compile Include="SplendorImageCreator.cs" />
     <Compile Include="ImageOrientation.cs" />
-    <Compile Include="ImageToSave.cs" />
     <Compile Include="NewCard.cs" />
     <Compile Include="PdfCreator.cs" />
     <Compile Include="Program.cs" />

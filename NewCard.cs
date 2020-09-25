@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Splendor
 {
-	public class NewCard : Card
+	public class NewToolCard : ToolCard
 	{
 		private static readonly IDictionary<string, string> materialsByResource = new Dictionary<string, string>
 		{

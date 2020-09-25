@@ -2,7 +2,7 @@
 
 namespace Splendor
 {
-	public class Card
+	public class ToolCard
 	{
 		public string ResourceProduced { get; set; }
 		public IDictionary<string, int> Costs { get; set; } = new Dictionary<string, int>();

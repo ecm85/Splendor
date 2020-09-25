@@ -9,6 +9,12 @@ namespace Splendor
 {
 	class Program
 	{
+		//Oh noes! The following changes were made and then lost (there may be others!)
+		//1. Changed images to fit copyright issues
+		//2. Changed setup aid to be by player count, with images
+		//3. Fixed boxy card image on player aid
+		//4. Unknown! Maybe fonts? Maybe scaling? Who knows!
+
 		private static bool useOverlay = false;
 
 		//r = red = axe = wood
@@ -37,17 +43,20 @@ namespace Splendor
 
 		static void Main()
 		{
-			var imageCreator = new ImageCreator();
+			var imageCreator = new SplendorImageCreator();
 
 			var newCards = ConvertCardsToNewCards();
-			var toolFrontImages = newCards.Select((newCard, i) => new ImageToSave {Image = imageCreator.CreateToolCardFront(newCard), Name = $"Tier {newCard.Tier} Front - {newCard.Name} {i}"}).ToList();
-			var toolBackImages = Enumerable.Range(1, 3).Select(index => new ImageToSave {Image = imageCreator.CreateToolCardBack(index), Name = $"Tier {index} Back"}).ToList();
-			var playerAidFrontImage = new [] {new ImageToSave {Image = imageCreator.CreatePlayerAidFront(), Name = "Player Aid Front"}};
-			var playerAidBackImage = new [] {new ImageToSave {Image = imageCreator.CreatePlayerAidBack(), Name = "Player Aid Back"}};
-			var questFrontImages = QuestFactory.CreateQuests().Select(quest => new ImageToSave {Image = imageCreator.CreateQuestFront(quest), Name = $"Quest - {quest.Name}"}).ToList();
-			var questAidImage = new [] {new ImageToSave {Image = imageCreator.CreateQuestAidFront(), Name = "Quest Aid"}};
-			var questBackImage = new [] {new ImageToSave {Image = imageCreator.CreateQuestBack(), Name = "Quest Back"}};
-			var setupAidFront = new[] {new ImageToSave {Image = imageCreator.CreateSetupAidFront(), Name = "Setup Aid"}};
+			var toolFrontImages = newCards.Select((newCard, index) => imageCreator.CreateToolCardFront(newCard, index)).ToList();
+			var toolBackImages = Enumerable.Range(1, 3).Select(index => imageCreator.CreateToolCardBack(index)).ToList();
+
+			var playerAidFrontImage = new [] {imageCreator.CreatePlayerAidFront()};
+			var playerAidBackImage = new [] {imageCreator.CreatePlayerAidBack()};
+
+			var questFrontImages = QuestFactory.CreateQuests().Select(quest => imageCreator.CreateQuestFront(quest)).ToList();
+			var questBackImage = new [] {imageCreator.CreateQuestBack()};
+
+			var setupAidImage = new[] {imageCreator.CreateSetupAidFront()};
+			var questAidImage = new[] { imageCreator.CreateQuestAidFront() };
 
 			var allImages = toolFrontImages
 				.Concat(toolBackImages)
@@ -56,7 +65,7 @@ namespace Splendor
 				.Concat(questFrontImages)
 				.Concat(questAidImage)
 				.Concat(questBackImage)
-				.Concat(setupAidFront);
+				.Concat(setupAidImage);
 
 			var dateStamp = DateTime.Now.ToString("yyyyMMddTHHmmss");
 			Directory.CreateDirectory($"c:\\delete\\images\\{dateStamp}");
@@ -73,8 +82,8 @@ namespace Splendor
 
 				foreach (var image in allImages)
 				{
-					var graphics = Graphics.FromImage(image.Image);
-					if (image.Image.Width < image.Image.Height)
+					var graphics = Graphics.FromImage(image.Bitmap);
+					if (image.Bitmap.Width < image.Bitmap.Height)
 					{
 						graphics.DrawImage(overlay, new Rectangle(0, 0, overlay.Width, overlay.Height), 0, 0, overlay.Width, overlay.Height, GraphicsUnit.Pixel, attributes);
 					}
@@ -86,15 +95,15 @@ namespace Splendor
 			}
 
 			foreach (var image in allImages)
-				image.Image.Save($"c:\\delete\\images\\{dateStamp}\\{image.Name}.png", ImageFormat.Png);
+				image.Bitmap.Save($"c:\\delete\\images\\{dateStamp}\\{image.Name}.png", ImageFormat.Png);
 		}
 
-		private static IList<NewCard> ConvertCardsToNewCards()
+		private static IList<NewToolCard> ConvertCardsToNewCards()
 		{
 			var strings = File.ReadAllLines("input.txt");
 			var cards = strings
 				.Select(s => s.Split('\t'))
-				.Select(tokens => new Card
+				.Select(tokens => new ToolCard
 				{
 					ResourceProduced = tokens[2],
 					Costs = tokens[3].Split('+').ToDictionary(token => CharToString(token[1]), token => CharToInt(token[0])),
@@ -106,7 +115,7 @@ namespace Splendor
 			var newCards = cards.Select(card =>
 			{
 				var transformedCosts = TransformCosts(card.Costs);
-				return new NewCard
+				return new NewToolCard
 				{
 					ResourceProduced = TransformColorProduced(card.ResourceProduced),
 					Costs = transformedCosts,
